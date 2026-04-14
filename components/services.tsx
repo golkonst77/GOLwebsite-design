@@ -5,28 +5,49 @@ import { useRef } from 'react'
 
 const services = [
   {
-    icon: '01',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    ),
     title: 'Лендинги',
-    description: 'Страницы, которые продают. Не просто красивая картинка — конверсионная машина с чёткой структурой и призывом к действию.',
-    highlight: '+45% конверсии',
+    description: 'Одностраничники, которые продают. Чёткая структура, сильные офферы, высокая конверсия. Идеально для запуска продукта или услуги.',
+    price: 'от 50 000 ₽',
+    timeline: '7-10 дней',
   },
   {
-    icon: '02',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+      </svg>
+    ),
     title: 'Корпоративные сайты',
-    description: 'Ваш бизнес заслуживает большего. Профессиональный сайт, который внушает доверие и работает 24/7.',
-    highlight: 'Полный цикл',
+    description: 'Многостраничные сайты для компаний. Представительство в интернете, которое работает на доверие и привлечение клиентов.',
+    price: 'от 100 000 ₽',
+    timeline: '14-21 день',
   },
   {
-    icon: '03',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+    ),
     title: 'Редизайн',
-    description: 'Старый сайт тянет вниз? Обновим до стандартов 2026 года. Современный вид, улучшенный UX, рост метрик.',
-    highlight: '+30% трафика',
+    description: 'Обновление устаревших сайтов до современных стандартов. Новый дизайн, улучшенный UX, рост конверсии без потери SEO.',
+    price: 'от 70 000 ₽',
+    timeline: '10-14 дней',
   },
   {
-    icon: '04',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    ),
     title: 'Техническая поддержка',
-    description: 'Не бросаем после сдачи. Обновления, правки, консультации. Ваш сайт всегда в форме.',
-    highlight: '24/7 поддержка',
+    description: 'Поддержка и развитие после запуска. Обновления контента, технические правки, консультации по улучшению.',
+    price: 'от 15 000 ₽/мес',
+    timeline: 'Постоянно',
   },
 ]
 
@@ -35,60 +56,54 @@ export default function Services() {
   const isInView = useInView(ref, { once: true })
 
   return (
-    <section id="services" className="py-24 md:py-40 px-6 relative overflow-hidden" ref={ref}>
-      {/* Background accent */}
-      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-neon-green/5 blur-3xl rounded-full" />
-      
-      <div className="max-w-7xl mx-auto relative z-10">
+    <section id="services" className="py-20 md:py-32 px-6 relative overflow-hidden border-t border-border" ref={ref}>
+      <div className="max-w-6xl mx-auto relative z-10">
         <div
           className={`transform transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <p className="text-neon-green text-sm tracking-[0.4em] uppercase mb-4 font-medium">
-            Что мы делаем
-          </p>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight">
-            Услуги
-          </h2>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mb-16">
-            Каждый проект — это инвестиция. Мы делаем так, чтобы она окупилась.
-          </p>
+          <div className="text-center mb-16">
+            <p className="text-neon-green text-sm tracking-[0.3em] uppercase mb-4">
+              Услуги
+            </p>
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-balance">
+              Что мы делаем
+            </h2>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {services.map((service, index) => (
               <div
                 key={index}
-                className="group relative border border-border p-8 md:p-10 hover:border-neon-green/50 transition-all duration-500 bg-card/50 backdrop-blur-sm overflow-hidden"
+                className="group p-6 md:p-8 border border-border bg-card/30 hover:border-neon-green/30 transition-all duration-300"
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
-                {/* Hover glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-neon-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
-                <div className="relative z-10">
-                  <div className="flex items-start justify-between mb-6">
-                    <span className="text-5xl font-bold text-neon-green/20 group-hover:text-neon-green/40 transition-colors duration-500">
-                      {service.icon}
-                    </span>
-                    <span className="text-xs tracking-widest text-neon-green border border-neon-green/30 px-3 py-1 uppercase">
-                      {service.highlight}
-                    </span>
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-neon-green/10 border border-neon-green/20 flex items-center justify-center text-neon-green group-hover:bg-neon-green/20 transition-colors">
+                    {service.icon}
                   </div>
-                  
-                  <h3 className="text-2xl font-bold mb-4 group-hover:text-neon-green transition-colors duration-300">
-                    {service.title}
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {service.description}
-                  </p>
-                  
-                  <div className="mt-6 flex items-center gap-2 text-neon-green opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-10px] group-hover:translate-x-0">
-                    <span className="text-sm tracking-widest uppercase">Подробнее</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-neon-green">{service.price}</div>
+                    <div className="text-xs text-muted-foreground">{service.timeline}</div>
                   </div>
                 </div>
+                
+                <h3 className="text-xl font-bold mb-3 text-foreground group-hover:text-neon-green transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-muted-foreground leading-relaxed text-sm">
+                  {service.description}
+                </p>
               </div>
             ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <a
+              href="#contact"
+              className="inline-block px-8 py-4 bg-neon-green text-background font-bold transition-all duration-300 tracking-wider uppercase text-sm"
+            >
+              Обсудить проект
+            </a>
           </div>
         </div>
       </div>
