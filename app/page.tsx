@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react'
 import Header from '@/components/header'
 import Hero from '@/components/hero'
 import Services from '@/components/services'
-import Advantages from '@/components/advantages'
-import Portfolio from '@/components/portfolio'
+import Process from '@/components/process'
+import Cases from '@/components/cases'
 import Testimonials from '@/components/testimonials'
 import FinalCTA from '@/components/final-cta'
 import Footer from '@/components/footer'
@@ -26,8 +26,8 @@ export default function Home() {
       <Header isScrolled={isScrolled} />
       <Hero />
       <Services />
-      <Advantages />
-      <Portfolio />
+      <Process />
+      <Cases />
       <Testimonials />
       <FinalCTA />
       <Footer />
