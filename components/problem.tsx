@@ -10,8 +10,8 @@ const problems = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
-    title: 'Сайт есть, но клиентов нет',
-    description: 'Потратили деньги на сайт, а он не приносит заявок. Красивая картинка без конверсии — деньги на ветер.',
+    title: 'Сайт есть. Заявок нет.',
+    description: 'Посетители заходят и уходят. Контактов почти нет.',
   },
   {
     icon: (
@@ -19,8 +19,8 @@ const problems = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
-    title: 'Конкуренты обгоняют',
-    description: 'Пока вы откладываете, конкуренты уже обновили свои сайты. Каждый день без хорошего сайта — упущенные клиенты.',
+    title: 'Выбирают не вас.',
+    description: 'Сравнивают за минуту. Уходят к тем, у кого все яснее.',
   },
   {
     icon: (
@@ -28,8 +28,8 @@ const problems = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
-    title: 'Сайт выглядит устаревшим',
-    description: 'Дизайн 5-летней давности отталкивает клиентов. Первое впечатление решает всё — и ваш сайт его портит.',
+    title: 'Сайт устарел. Доверия нет.',
+    description: 'Видно, что проект из прошлого. Качество бизнеса не считывается.',
   },
   {
     icon: (
@@ -37,8 +37,8 @@ const problems = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
       </svg>
     ),
-    title: 'Фрилансеры подвели',
-    description: 'Работали с фрилансерами — получили головную боль. Срывы сроков, пропавшие исполнители, незаконченные проекты.',
+    title: 'Доработки без конца.',
+    description: 'Правки идут по кругу. Запуск снова переносится.',
   },
 ]
 
@@ -57,7 +57,7 @@ export default function Problem() {
               Знакомо?
             </p>
             <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-balance">
-              Почему ваш бизнес <span className="text-neon-blue">теряет деньги</span>
+              Где бизнес <span className="text-neon-blue">теряет деньги</span>
             </h2>
           </div>
 
@@ -87,7 +87,7 @@ export default function Problem() {
 
           <div className="mt-12 p-6 md:p-8 border border-neon-green/20 bg-neon-green/5 text-center">
             <p className="text-lg md:text-xl text-foreground">
-              <span className="text-neon-green font-bold">Хорошая новость:</span> всё это можно исправить за 2-3 недели.
+              <span className="text-neon-green font-bold">Это решаемо:</span> обычно достаточно 2-3 недель спокойной, системной работы.
             </p>
           </div>
         </div>

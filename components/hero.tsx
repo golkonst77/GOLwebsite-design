@@ -78,8 +78,8 @@ export default function Hero() {
             className={`text-[12vw] md:text-[10vw] lg:text-[8vw] font-bold leading-[0.9] tracking-[-0.03em] mb-8 ${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
             style={{ animationDelay: '0.4s' }}
           >
-            <span className="block text-foreground">Мы создаём</span>
-            <span className="block text-gradient">цифровой опыт</span>
+            <span className="block text-foreground">Чистый дизайн.</span>
+            <span className="block text-gradient">Сильный результат.</span>
           </h1>
 
           {/* Subheadline */}
@@ -87,9 +87,9 @@ export default function Hero() {
             className={`text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl font-light leading-relaxed mb-12 ${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
             style={{ animationDelay: '0.6s' }}
           >
-            Веб-сайты, которые вдохновляют и конвертируют.
+            Четкая структура. Ясная подача.
             <br className="hidden md:block" />
-            Дизайн, который запоминается.
+            Ты показываешь ценность и получаешь результат.
           </p>
 
           {/* CTA */}
@@ -103,7 +103,7 @@ export default function Hero() {
             >
               <span className="absolute inset-0 bg-gold transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
               <span className="relative z-10 text-sm tracking-[0.2em] uppercase text-foreground group-hover:text-background transition-colors duration-500">
-                Смотреть работы
+                Смотреть кейсы
               </span>
               <svg 
                 className="relative z-10 w-5 h-5 text-gold group-hover:text-background transition-colors duration-500 transform group-hover:translate-x-1" 

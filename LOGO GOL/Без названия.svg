@@ -1,0 +1,18 @@
+<svg width="1200" height="1400" viewBox="0 0 1200 1400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1400" fill="#0B0B0B"></rect>
+
+  <!-- Symbol -->
+  <g transform="translate(300 140) scale(1.171875)">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M152 116C152 98.3269 166.327 84 184 84H348C365.673 84 380 98.3269 380 116V180C380 197.673 365.673 212 348 212H286V180H340V124H196V388H292L380 300V228C380 210.327 394.327 196 412 196C429.673 196 444 210.327 444 228V316C444 324.487 440.629 332.626 434.627 338.627L330.627 442.627C324.626 448.629 316.487 452 308 452H184C166.327 452 152 437.673 152 420V116ZM276 244C258.327 244 244 258.327 244 276V340C244 357.673 258.327 372 276 372H340C348.487 372 356.626 368.629 362.627 362.627L414.627 310.627C420.629 304.626 424 296.487 424 288V276C424 258.327 409.673 244 392 244H276Z" fill="#F3F1EC"></path>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="600" y="860" text-anchor="middle" fill="#F3F1EC" font-size="150" font-family="Inter, Helvetica, Arial, sans-serif" font-weight="600" letter-spacing="12">
+    GØL
+  </text>
+
+  <!-- Tagline -->
+  <text x="600" y="980" text-anchor="middle" fill="#A9AAA6" font-size="40" font-family="Inter, Helvetica, Arial, sans-serif" font-weight="500" letter-spacing="14">
+    ЧИСТЫЙ ДИЗАЙН СИЛЬНЫЙ РЕЗУЛЬТАТ
+  </text>
+</svg>
