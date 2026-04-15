@@ -1,131 +1,141 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import LeadForm from './lead-form'
+import { useEffect, useState, useRef } from 'react'
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const heroRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     setIsVisible(true)
   }, [])
 
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (heroRef.current) {
+        const rect = heroRef.current.getBoundingClientRect()
+        setMousePosition({
+          x: (e.clientX - rect.left) / rect.width,
+          y: (e.clientY - rect.top) / rect.height,
+        })
+      }
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
   return (
-    <section className="relative min-h-screen w-full overflow-hidden flex items-center justify-center pt-20 pb-12">
-      {/* Subtle grid background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px)
-            `,
-            backgroundSize: '60px 60px',
-          }}
-        />
+    <section 
+      ref={heroRef}
+      className="relative min-h-screen w-full overflow-hidden flex items-center justify-center"
+    >
+      {/* Animated gradient background */}
+      <div 
+        className="absolute inset-0 animate-gradient"
+        style={{
+          background: `
+            radial-gradient(circle at ${mousePosition.x * 100}% ${mousePosition.y * 100}%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+            radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.08) 0%, transparent 40%),
+            linear-gradient(180deg, #050510 0%, #0a0a1a 50%, #050510 100%)
+          `,
+        }}
+      />
+
+      {/* Floating shapes */}
+      <div 
+        className="absolute top-1/4 right-1/4 w-[400px] h-[400px] rounded-full animate-float opacity-20"
+        style={{
+          background: 'radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, transparent 70%)',
+          animationDelay: '0s',
+        }}
+      />
+      <div 
+        className="absolute bottom-1/3 left-1/5 w-[300px] h-[300px] rounded-full animate-float opacity-15"
+        style={{
+          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%)',
+          animationDelay: '2s',
+        }}
+      />
+
+      {/* Main content */}
+      <div className="relative z-10 w-full px-6 md:px-12 max-w-[1400px] mx-auto">
+        <div className="flex flex-col items-center text-center">
+          {/* Tagline */}
+          <div
+            className={`overflow-hidden mb-8 ${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
+            style={{ animationDelay: '0.2s' }}
+          >
+            <p className="text-sm md:text-base tracking-[0.4em] uppercase text-gold font-light">
+              Digital Design Studio
+            </p>
+          </div>
+
+          {/* Main headline */}
+          <h1 
+            className={`text-[12vw] md:text-[10vw] lg:text-[8vw] font-bold leading-[0.9] tracking-[-0.03em] mb-8 ${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
+            style={{ animationDelay: '0.4s' }}
+          >
+            <span className="block text-foreground">Мы создаём</span>
+            <span className="block text-gradient">цифровой опыт</span>
+          </h1>
+
+          {/* Subheadline */}
+          <p 
+            className={`text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl font-light leading-relaxed mb-12 ${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
+            style={{ animationDelay: '0.6s' }}
+          >
+            Веб-сайты, которые вдохновляют и конвертируют.
+            <br className="hidden md:block" />
+            Дизайн, который запоминается.
+          </p>
+
+          {/* CTA */}
+          <div 
+            className={`${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
+            style={{ animationDelay: '0.8s' }}
+          >
+            <a
+              href="#work"
+              className="group relative inline-flex items-center gap-4 px-10 py-5 border border-gold/30 hover:border-gold transition-all duration-500 overflow-hidden"
+            >
+              <span className="absolute inset-0 bg-gold transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+              <span className="relative z-10 text-sm tracking-[0.2em] uppercase text-foreground group-hover:text-background transition-colors duration-500">
+                Смотреть работы
+              </span>
+              <svg 
+                className="relative z-10 w-5 h-5 text-gold group-hover:text-background transition-colors duration-500 transform group-hover:translate-x-1" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div 
+          className={`absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}
+          style={{ animationDelay: '1.2s' }}
+        >
+          <span className="text-xs tracking-[0.3em] uppercase text-muted-foreground">Scroll</span>
+          <div className="w-px h-16 bg-gradient-to-b from-gold to-transparent" />
+        </div>
       </div>
 
-      {/* Subtle accent glow */}
-      <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-neon-green/[0.03] rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-neon-blue/[0.03] rounded-full blur-3xl" />
-
-      <div className="relative z-10 w-full px-6 max-w-6xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left content */}
-          <div
-            className={`transform transition-all duration-1000 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-            }`}
-          >
-            <p className="text-sm tracking-[0.3em] mb-6 text-neon-green uppercase font-medium">
-              Веб-студия GØL
-            </p>
-
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
-              <span className="text-balance block">Сайт, который</span>
-              <span className="text-balance block">
-                <span className="text-neon-green">приносит клиентов</span>
-              </span>
-            </h1>
-
-            <p className="text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
-              Создаём лендинги и корпоративные сайты с фокусом на конверсию. 
-              Средний рост заявок у наших клиентов — <span className="text-foreground font-medium">+45%</span>.
-            </p>
-
-            {/* Key benefits */}
-            <div className="flex flex-wrap gap-4 mb-8">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <svg className="w-4 h-4 text-neon-green" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>Готово за 2-3 недели</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <svg className="w-4 h-4 text-neon-green" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>Фиксированная цена</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <svg className="w-4 h-4 text-neon-green" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>Гарантия результата</span>
-              </div>
-            </div>
-
-            {/* Mobile CTA */}
-            <div className="lg:hidden">
-              <a
-                href="#contact"
-                className="inline-block px-8 py-4 bg-neon-green text-background font-bold transition-all duration-300 tracking-wider uppercase text-sm"
-              >
-                Получить консультацию
-              </a>
-            </div>
-          </div>
-
-          {/* Right - Form */}
-          <div
-            className={`transform transition-all duration-1000 delay-200 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-            }`}
-          >
-            <div className="p-8 md:p-10 border border-border bg-card/50 backdrop-blur-sm">
-              <div className="mb-6">
-                <h2 className="text-xl md:text-2xl font-bold mb-2">
-                  Бесплатная консультация
-                </h2>
-                <p className="text-muted-foreground text-sm">
-                  Обсудим ваш проект и дадим честную оценку
-                </p>
-              </div>
-              <LeadForm variant="compact" />
-            </div>
-          </div>
-        </div>
-
-        {/* Stats row - below main content */}
-        <div
-          className={`mt-16 pt-16 border-t border-border grid grid-cols-3 gap-8 max-w-2xl mx-auto lg:mx-0 transform transition-all duration-1000 delay-400 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}
-        >
-          <div className="text-center lg:text-left">
-            <div className="text-2xl md:text-3xl font-bold text-neon-green">50+</div>
-            <div className="text-xs text-muted-foreground mt-1">Проектов</div>
-          </div>
-          <div className="text-center lg:text-left">
-            <div className="text-2xl md:text-3xl font-bold text-neon-green">+45%</div>
-            <div className="text-xs text-muted-foreground mt-1">Рост конверсии</div>
-          </div>
-          <div className="text-center lg:text-left">
-            <div className="text-2xl md:text-3xl font-bold text-foreground">2 нед</div>
-            <div className="text-xs text-muted-foreground mt-1">Средний срок</div>
-          </div>
-        </div>
+      {/* Large Ø watermark */}
+      <div 
+        className="absolute right-0 top-1/2 -translate-y-1/2 text-[40vw] font-bold text-white/[0.02] leading-none pointer-events-none select-none"
+        style={{
+          transform: `translate(20%, -50%) rotate(${mousePosition.x * 5 - 2.5}deg)`,
+          transition: 'transform 0.3s ease-out',
+        }}
+      >
+        Ø
       </div>
     </section>
   )

@@ -1,94 +1,86 @@
 'use client'
 
+import { useRef, useState } from 'react'
 import { useInView } from '@/hooks/use-in-view'
-import { useRef } from 'react'
 
 const testimonials = [
   {
     id: 1,
-    text: 'Конверсия выросла на 67% за первый месяц. Вложения окупились в 10 раз. Рекомендую всем, кто хочет результат, а не просто красивую картинку.',
-    author: 'Дмитрий Волков',
+    quote: 'Они не просто создали сайт — они создали инструмент, который реально работает на бизнес.',
+    author: 'Дмитрий В.',
     role: 'CEO, TechStart',
-    company: 'IT-стартап',
   },
   {
     id: 2,
-    text: 'За 2 недели получили сайт, который конкуренты делают за 2 месяца. И это без потери качества. Чёткий процесс, понятные сроки.',
-    author: 'Анна Соколова',
+    quote: 'Внимание к деталям на уровне лучших студий мира. Каждый пиксель на своём месте.',
+    author: 'Анна С.',
     role: 'CMO, FinanceHub',
-    company: 'Финтех',
   },
   {
     id: 3,
-    text: 'До этого работали с тремя фрилансерами — каждый раз головная боль. Здесь всё было по-другому: профессионально, в срок, без нервов.',
-    author: 'Максим Петренко',
-    role: 'Основатель',
-    company: 'E-commerce',
-  },
-  {
-    id: 4,
-    text: 'Минимализм, который продаёт. Убрали всё лишнее, добавили то, что работает. Заявки выросли с 5 до 20 в день.',
-    author: 'Елена Краснова',
-    role: 'Директор по маркетингу',
-    company: 'Услуги',
+    quote: 'Конверсия выросла в 3 раза. Это говорит само за себя.',
+    author: 'Максим П.',
+    role: 'Founder, StyleStore',
   },
 ]
 
 export default function Testimonials() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true })
+  const [activeIndex, setActiveIndex] = useState(0)
 
   return (
-    <section id="testimonials" className="py-20 md:py-32 px-6 relative overflow-hidden border-t border-border" ref={ref}>
-      <div className="max-w-6xl mx-auto relative z-10">
-        <div
-          className={`transform transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+    <section 
+      id="testimonials" 
+      className="relative py-32 md:py-48 px-6 md:px-12 overflow-hidden"
+      ref={ref}
+    >
+      {/* Background accent */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gold/[0.02]" />
+      </div>
+
+      <div className="max-w-[1200px] mx-auto relative z-10">
+        {/* Section header */}
+        <div 
+          className={`text-center mb-20 md:mb-32 transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        >
+          <p className="text-sm tracking-[0.4em] uppercase text-gold mb-6">
+            Отзывы
+          </p>
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.02em]">
+            <span className="text-foreground">Слова</span>{' '}
+            <span className="text-gradient-gold">клиентов</span>
+          </h2>
+        </div>
+
+        {/* Main testimonial */}
+        <div 
+          className={`transition-all duration-1000 delay-200 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           <div className="text-center mb-16">
-            <p className="text-neon-green text-sm tracking-[0.3em] uppercase mb-4">
-              Отзывы
-            </p>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-balance">
-              Что говорят клиенты
-            </h2>
+            <blockquote className="text-2xl md:text-4xl lg:text-5xl font-light leading-tight text-foreground mb-12">
+              &ldquo;{testimonials[activeIndex].quote}&rdquo;
+            </blockquote>
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-gold font-medium">{testimonials[activeIndex].author}</span>
+              <span className="text-muted-foreground text-sm">{testimonials[activeIndex].role}</span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={testimonial.id}
-                className="group p-6 md:p-8 border border-border bg-card/30 hover:border-neon-green/30 transition-all duration-300"
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                {/* Stars */}
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-4 h-4 text-neon-green" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                
-                {/* Quote */}
-                <p className="text-foreground mb-6 leading-relaxed">
-                  &ldquo;{testimonial.text}&rdquo;
-                </p>
-                
-                {/* Author */}
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-neon-green/10 border border-neon-green/20 flex items-center justify-center">
-                    <span className="text-sm font-bold text-neon-green">
-                      {testimonial.author.charAt(0)}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground text-sm">{testimonial.author}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {testimonial.role} • {testimonial.company}
-                    </p>
-                  </div>
-                </div>
-              </div>
+          {/* Navigation dots */}
+          <div className="flex justify-center gap-4">
+            {testimonials.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setActiveIndex(index)}
+                className={`w-2 h-2 transition-all duration-300 ${
+                  index === activeIndex 
+                    ? 'bg-gold w-8' 
+                    : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                }`}
+                aria-label={`View testimonial ${index + 1}`}
+              />
             ))}
           </div>
         </div>
