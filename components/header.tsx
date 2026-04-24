@@ -33,7 +33,7 @@ export default function Header({ isScrolled }: HeaderProps) {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-12">
             <Link 
-              href="#work" 
+              href="#cases" 
               className="text-sm tracking-[0.1em] text-muted-foreground hover:text-foreground transition-colors duration-300"
             >
               Работы
@@ -93,7 +93,7 @@ export default function Header({ isScrolled }: HeaderProps) {
       >
         <div className="flex flex-col items-center justify-center h-full gap-8">
           <Link 
-            href="#work" 
+            href="#cases" 
             className="text-3xl font-light text-foreground hover:text-gold transition-colors"
             onClick={() => setIsMenuOpen(false)}
           >

@@ -98,7 +98,7 @@ export default function Hero() {
             style={{ animationDelay: '0.8s' }}
           >
             <a
-              href="#work"
+              href="#cases"
               className="group relative inline-flex items-center gap-4 px-10 py-5 border border-gold/30 hover:border-gold transition-all duration-500 overflow-hidden"
             >
               <span className="absolute inset-0 bg-gold transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
