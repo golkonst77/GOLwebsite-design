@@ -53,7 +53,7 @@ export default function Cases() {
           className={`transform transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           <div className="text-center mb-16">
-            <p className="text-neon-green text-sm tracking-[0.3em] uppercase mb-4">
+            <p className="text-gold text-sm tracking-[0.3em] uppercase mb-4">
               Результаты
             </p>
             <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-balance">
@@ -68,7 +68,7 @@ export default function Cases() {
             {cases.map((caseItem, index) => (
               <div
                 key={caseItem.id}
-                className="group border border-border bg-card/30 hover:border-neon-green/30 transition-all duration-300"
+                className="group border border-border bg-card/30 hover:border-gold/30 transition-all duration-300"
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
                 <div className="p-6 md:p-8">
@@ -78,13 +78,13 @@ export default function Cases() {
                       <p className="text-xs tracking-[0.2em] text-muted-foreground uppercase mb-3">
                         {caseItem.category}
                       </p>
-                      <h3 className="text-xl md:text-2xl font-bold mb-3 text-foreground group-hover:text-neon-green transition-colors">
+                      <h3 className="text-xl md:text-2xl font-bold mb-3 text-foreground group-hover:text-gold transition-colors">
                         {caseItem.title}
                       </h3>
                       <p className="text-muted-foreground leading-relaxed mb-4 max-w-xl">
                         {caseItem.description}
                       </p>
-                      <p className="text-sm text-neon-green font-medium">
+                      <p className="text-sm text-gold font-medium">
                         {caseItem.result}
                       </p>
                     </div>
@@ -96,7 +96,7 @@ export default function Cases() {
                           key={metricIndex}
                           className="p-4 border border-border bg-background/50 min-w-[100px] text-center"
                         >
-                          <div className="text-xl md:text-2xl font-bold text-neon-green mb-1">
+                          <div className="text-xl md:text-2xl font-bold text-gold mb-1">
                             {metric.value}
                           </div>
                           <div className="text-xs text-muted-foreground">
@@ -117,7 +117,7 @@ export default function Cases() {
             </p>
             <a
               href="#contact"
-              className="inline-block px-8 py-4 border border-neon-green text-neon-green font-bold hover:bg-neon-green hover:text-background transition-all duration-300 tracking-wider uppercase text-sm"
+              className="inline-block px-8 py-4 border border-gold text-gold font-bold hover:bg-gold hover:text-background transition-all duration-300 tracking-wider uppercase text-sm"
             >
               Обсудить ваш проект
             </a>

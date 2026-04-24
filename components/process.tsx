@@ -47,7 +47,7 @@ export default function Process() {
           className={`transform transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           <div className="text-center mb-16">
-            <p className="text-neon-green text-sm tracking-[0.3em] uppercase mb-4">
+            <p className="text-gold text-sm tracking-[0.3em] uppercase mb-4">
               Как мы работаем
             </p>
             <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-balance">
@@ -62,33 +62,33 @@ export default function Process() {
             {steps.map((step, index) => (
               <div
                 key={index}
-                className="group p-6 border border-border bg-card/30 hover:border-neon-green/30 transition-all duration-300 text-center"
+                className="group p-6 border border-border bg-card/30 hover:border-gold/30 transition-all duration-300 text-center"
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
-                <div className="text-3xl font-bold text-neon-green/30 group-hover:text-neon-green/60 transition-colors mb-3">
+                <div className="text-3xl font-bold text-gold/25 group-hover:text-gold/60 transition-colors mb-3">
                   {step.number}
                 </div>
-                <h3 className="font-bold text-foreground mb-2 group-hover:text-neon-green transition-colors">
+                <h3 className="font-bold text-foreground mb-2 group-hover:text-gold transition-colors">
                   {step.title}
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed mb-3">
                   {step.description}
                 </p>
-                <span className="text-xs text-neon-green">
+                <span className="text-xs text-gold">
                   {step.duration}
                 </span>
               </div>
             ))}
           </div>
 
-          <div className="mt-12 p-6 border border-neon-green/20 bg-neon-green/5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="mt-12 p-6 border border-gold/20 bg-gold/5 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Общий срок</p>
               <p className="text-2xl font-bold text-foreground">2-3 недели</p>
             </div>
             <a
               href="#contact"
-              className="px-6 py-3 bg-neon-green text-background font-bold transition-all duration-300 tracking-wider uppercase text-sm"
+              className="px-6 py-3 bg-gold text-background font-bold transition-all duration-300 tracking-wider uppercase text-sm"
             >
               Обсудить проект
             </a>
