@@ -62,17 +62,17 @@ export default function FinalCTA() {
           className={`transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           <p className="text-sm tracking-[0.4em] uppercase text-gold mb-8">
-            Начнём проект
+            Связаться
           </p>
 
           <h2 className="text-4xl md:text-6xl lg:text-8xl font-bold tracking-[-0.02em] mb-8 leading-[0.95]">
-            <span className="text-foreground">Есть задача или идея?</span>
+            <span className="text-foreground">Есть задача по сайту?</span>
             <br />
-            <span className="text-gradient">Обсудим.</span>
+            <span className="text-gradient">Обсудить</span>
           </h2>
 
           <p className="text-lg md:text-xl text-muted-foreground font-light max-w-lg mx-auto mb-12">
-            Расскажите о вашем проекте. Мы ответим в течение 24 часов.
+            Разберём проект, подскажем формат и скажем, с чего лучше начать.
           </p>
 
           {/* CTA Buttons */}
@@ -83,7 +83,7 @@ export default function FinalCTA() {
             >
               <span className="absolute inset-0 bg-gold transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
               <span className="relative z-10 text-sm tracking-[0.2em] uppercase text-foreground group-hover:text-background transition-colors duration-500">
-                Написать на почту
+                Обсудить сайт
               </span>
               <svg 
                 className="relative z-10 w-5 h-5 text-gold group-hover:text-background transition-colors duration-500" 

@@ -8,35 +8,38 @@ const cases = [
     id: 1,
     title: 'Сайт для бухгалтерской компании',
     category: 'Сайт услуг',
-    description: 'Собрали понятный сайт для услуг: ценность, процесс работы и заявки — без лишнего.',
-    result: 'Конверсия 12.4% — в 3 раза выше среднего по нише.',
+    description:
+      'Было: сайт не отвечал на вопрос “почему вы” и терял внимание.\nСделали: пересобрали структуру, оффер и путь к заявке.\nРезультат: стало понятнее, зачем обращаться и что делать дальше.',
+    result: 'Результат: больше обращений и выше доверие с первого экрана.',
     metrics: [
-      { label: 'Конверсия', value: '12.4%' },
-      { label: 'Заявок/день', value: '340+' },
+      { label: 'Понимание ценности', value: 'выше' },
+      { label: 'Обращений', value: 'больше' },
       { label: 'Срок', value: '10 дней' },
     ],
   },
   {
     id: 2,
-    title: 'Сайт для локального бизнеса (интернет‑магазин)',
+    title: 'Сайт для локального бизнеса',
     category: 'E-commerce',
-    description: 'Полный редизайн и оптимизация конверсионной воронки для онлайн-ритейлера одежды.',
-    result: 'Рост конверсии на 67% за первый месяц после запуска.',
+    description:
+      'Было: каталог и условия были спрятаны, путь к покупке путал.\nСделали: упростили навигацию, карточки товаров и оформление.\nРезультат: посетителям легче выбрать и сделать заказ.',
+    result: 'Результат: меньше сомнений на пути к покупке и больше завершённых действий.',
     metrics: [
-      { label: 'Рост конверсии', value: '+67%' },
-      { label: 'Снижение отказов', value: '-42%' },
+      { label: 'Выбор товара', value: 'проще' },
+      { label: 'Путь к заказу', value: 'короче' },
       { label: 'Срок', value: '3 нед' },
     ],
   },
   {
     id: 3,
-    title: 'Сайт для B2B компании',
+    title: 'Сайт для услуг',
     category: 'Корпоративный сайт',
-    description: 'Многостраничный сайт для B2B‑услуг: структура, смыслы и интеграция CRM.',
-    result: 'Рост органического трафика на 89% за 3 месяца.',
+    description:
+      'Было: услуги описаны разрозненно, клиенту сложно понять формат работы.\nСделали: собрали понятные блоки, кейсы и сценарий обращения.\nРезультат: проще принять решение и оставить заявку.',
+    result: 'Результат: яснее позиционирование и понятнее следующий шаг для клиента.',
     metrics: [
-      { label: 'Рост трафика', value: '+89%' },
-      { label: 'Время на сайте', value: '+2.5 мин' },
+      { label: 'Ясность предложения', value: 'выше' },
+      { label: 'Доверие', value: 'выше' },
       { label: 'Срок', value: '3 нед' },
     ],
   },
@@ -109,6 +112,23 @@ export default function Cases() {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="mt-10 border border-border bg-card/30 p-6 md:p-8">
+            <div className="flex flex-col items-center justify-between gap-5 md:flex-row">
+              <div className="text-center md:text-left">
+                <p className="text-lg font-semibold text-foreground">Похоже на вашу задачу?</p>
+                <p className="mt-1 text-muted-foreground">
+                  Обсудим, какой сайт нужен именно вам.
+                </p>
+              </div>
+              <a
+                href="#contact"
+                className="group relative inline-flex h-12 items-center justify-center rounded-full bg-gold px-8 text-sm font-medium tracking-[0.12em] text-background transition-transform duration-300 ease-out supports-[hover:hover]:hover:-translate-y-[1px] active:translate-y-0"
+              >
+                Обсудить сайт
+              </a>
+            </div>
           </div>
 
           <div className="mt-12 text-center">

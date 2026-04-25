@@ -46,7 +46,7 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
       <form onSubmit={handleSubmit} className={`flex flex-col sm:flex-row gap-4 ${className}`}>
         <input
           type="text"
-          placeholder="Ваш Telegram или телефон"
+          placeholder="Телефон или Telegram"
           value={formData.contact}
           onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
           required
@@ -57,7 +57,7 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
           disabled={isSubmitting}
           className="px-8 py-4 bg-neon-green text-background font-bold hover:glow-green transition-all duration-300 tracking-wider uppercase text-sm disabled:opacity-50"
         >
-          {isSubmitting ? 'Отправка...' : 'Получить консультацию'}
+          {isSubmitting ? 'Отправка...' : 'Обсудить сайт'}
         </button>
       </form>
     )
@@ -66,6 +66,9 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
   if (variant === 'compact') {
     return (
       <form onSubmit={handleSubmit} className={`space-y-4 ${className}`}>
+        <p className="text-sm text-muted-foreground">
+          Расскажите коротко о задаче — ответим в течение дня и подскажем, с чего начать.
+        </p>
         <input
           type="text"
           placeholder="Имя"
@@ -76,21 +79,28 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
         />
         <input
           type="text"
-          placeholder="Telegram или телефон"
+          placeholder="Телефон или Telegram"
           value={formData.contact}
           onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
           required
           className="w-full px-5 py-4 bg-card border border-border text-foreground placeholder:text-muted-foreground focus:border-neon-green focus:outline-none transition-colors"
+        />
+        <textarea
+          placeholder="Коротко о задаче"
+          value={formData.message}
+          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+          rows={3}
+          className="w-full px-5 py-4 bg-card border border-border text-foreground placeholder:text-muted-foreground focus:border-neon-green focus:outline-none transition-colors resize-none"
         />
         <button
           type="submit"
           disabled={isSubmitting}
           className="w-full px-8 py-4 bg-neon-green text-background font-bold hover:glow-green transition-all duration-300 tracking-wider uppercase text-sm disabled:opacity-50"
         >
-          {isSubmitting ? 'Отправка...' : 'Получить консультацию'}
+          {isSubmitting ? 'Отправка...' : 'Обсудить сайт'}
         </button>
         <p className="text-xs text-muted-foreground text-center">
-          Ответим в течение 2 часов. Без спама.
+          Без спама. Только ответ по вашей задаче.
         </p>
       </form>
     )
@@ -98,11 +108,14 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
 
   return (
     <form onSubmit={handleSubmit} className={`space-y-5 ${className}`}>
+      <p className="text-muted-foreground">
+        Расскажите коротко о задаче — ответим в течение дня и подскажем, с чего начать.
+      </p>
       <div>
-        <label className="block text-sm font-medium text-foreground mb-2">Ваше имя</label>
+        <label className="block text-sm font-medium text-foreground mb-2">Имя</label>
         <input
           type="text"
-          placeholder="Как к вам обращаться?"
+          placeholder="Имя"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           required
@@ -110,10 +123,10 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-foreground mb-2">Telegram или телефон</label>
+        <label className="block text-sm font-medium text-foreground mb-2">Телефон или Telegram</label>
         <input
           type="text"
-          placeholder="@username или +7..."
+          placeholder="Телефон или Telegram"
           value={formData.contact}
           onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
           required
@@ -121,9 +134,9 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-foreground mb-2">О проекте (опционально)</label>
+        <label className="block text-sm font-medium text-foreground mb-2">Коротко о задаче</label>
         <textarea
-          placeholder="Расскажите кратко о вашем проекте..."
+          placeholder="Коротко о задаче"
           value={formData.message}
           onChange={(e) => setFormData({ ...formData, message: e.target.value })}
           rows={3}
@@ -135,22 +148,11 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
         disabled={isSubmitting}
         className="w-full px-8 py-5 bg-neon-green text-background font-bold hover:glow-green transition-all duration-300 tracking-wider uppercase disabled:opacity-50"
       >
-        {isSubmitting ? 'Отправка...' : 'Получить бесплатную консультацию'}
+        {isSubmitting ? 'Отправка...' : 'Обсудить сайт'}
       </button>
-      <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground pt-2">
-        <span className="flex items-center gap-1">
-          <svg className="w-4 h-4 text-neon-green" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
-          Ответ за 2 часа
-        </span>
-        <span className="flex items-center gap-1">
-          <svg className="w-4 h-4 text-neon-green" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
-          Без предоплаты
-        </span>
-      </div>
+      <p className="text-xs text-muted-foreground text-center pt-2">
+        Без спама. Только ответ по вашей задаче.
+      </p>
     </form>
   )
 }

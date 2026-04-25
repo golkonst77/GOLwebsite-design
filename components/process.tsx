@@ -81,6 +81,10 @@ export default function Process() {
             ))}
           </div>
 
+          <p className="mt-6 text-sm text-white/50 text-center">
+            Каждый этап виден заранее: структура, дизайн, запуск и поддержка.
+          </p>
+
           <div className="mt-12 p-6 border border-gold/20 bg-gold/5 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Общий срок</p>

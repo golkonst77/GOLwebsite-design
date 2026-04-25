@@ -268,8 +268,8 @@ export default function Hero() {
               className={`text-[12vw] md:text-[10vw] lg:text-[72px] font-bold leading-[0.9] tracking-[-0.03em] mb-8 ${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
               style={{ animationDelay: '0.4s' }}
             >
-              <span className="block text-foreground">Чистый дизайн.</span>
-              <span className="block text-gradient">Сильный результат.</span>
+              <span className="block text-foreground">Сайты, которые</span>
+              <span className="block text-gradient">приводят заявки</span>
             </h1>
 
             {/* Subheadline */}
@@ -279,7 +279,7 @@ export default function Hero() {
             >
               Чёткая структура. Спокойный дизайн.
               <br className="hidden md:block" />
-              Сайты для бизнеса, где важен результат.
+              Для услуг и малого бизнеса — без перегрузки и красоты ради красоты.
             </p>
 
             {/* CTA */}
@@ -319,7 +319,7 @@ export default function Hero() {
             </div>
 
             <p className="mt-4 text-xs tracking-[0.14em] text-white/40">
-              Договор · этапы видны · 30 дней поддержки после запуска
+              2–3 недели до запуска · договор · 30 дней поддержки
             </p>
           </div>
 
