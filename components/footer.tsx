@@ -2,6 +2,8 @@ import pkg from '@/package.json'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  const commitSha = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA
+  const version = commitSha ? `build ${commitSha.slice(0, 7)}` : `v${pkg.version}`
 
   return (
     <footer className="border-t border-border py-12 px-6">
@@ -104,7 +106,7 @@ export default function Footer() {
               © {currentYear} GØL. Все права защищены.
             </p>
             <p className="text-muted-foreground/70 text-xs tracking-[0.2em] uppercase">
-              v{pkg.version}
+              {version}
             </p>
           </div>
           <a
