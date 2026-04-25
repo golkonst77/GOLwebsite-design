@@ -10,35 +10,17 @@ const problems = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
-    title: 'Сайт есть. Заявок нет.',
-    description: 'Посетители заходят и уходят. Контактов почти нет.',
-  },
-  {
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+    title: 'Сайт есть, но заявок почти нет.',
+    description: (
+      <>
+        Дизайн выглядит нормально,
+        <br />
+        но не объясняет, почему выбрать именно вас.
+        <br />
+        <br />
+        Клиенты заходят — и уходят.
+      </>
     ),
-    title: 'Выбирают не вас.',
-    description: 'Сравнивают за минуту. Уходят к тем, у кого все яснее.',
-  },
-  {
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-    title: 'Сайт устарел. Доверия нет.',
-    description: 'Видно, что проект из прошлого. Качество бизнеса не считывается.',
-  },
-  {
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-      </svg>
-    ),
-    title: 'Доработки без конца.',
-    description: 'Правки идут по кругу. Запуск снова переносится.',
   },
 ]
 

@@ -93,6 +93,10 @@ export default function Process() {
               Обсудить проект
             </a>
           </div>
+
+          <p className="mt-6 text-sm text-white/60 text-center">
+            От первого контакта до запуска — обычно 2–3 недели. Без спешки. Без лишнего.
+          </p>
         </div>
       </div>
     </section>

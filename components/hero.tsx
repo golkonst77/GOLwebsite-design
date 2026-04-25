@@ -277,26 +277,26 @@ export default function Hero() {
               className={`text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl font-light leading-relaxed mb-12 ${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
               style={{ animationDelay: '0.6s' }}
             >
-              Четкая структура. Ясная подача.
+              Чёткая структура. Спокойный дизайн.
               <br className="hidden md:block" />
-              Ты показываешь ценность и получаешь результат.
+              Сайты для бизнеса, где важен результат.
             </p>
 
             {/* CTA */}
             <div
-              className={`${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
+              className={`${isVisible ? 'animate-fade-up' : 'opacity-0'} flex items-center gap-3`}
               style={{ animationDelay: '0.8s' }}
             >
               <a
-                href="#cases"
-                className="group relative inline-flex items-center gap-4 px-10 py-5 border border-gold/30 hover:border-gold transition-all duration-500 overflow-hidden"
+                href="#contact"
+                className="group relative inline-flex items-center gap-4 rounded-full bg-gold px-10 py-5 text-background shadow-[0_18px_50px_rgba(212,175,55,0.18)] transition-transform duration-500 ease-out overflow-hidden supports-[hover:hover]:hover:-translate-y-[1px] active:translate-y-0"
               >
-                <span className="absolute inset-0 bg-gold transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-                <span className="relative z-10 text-sm tracking-[0.2em] uppercase text-foreground group-hover:text-background transition-colors duration-500">
-                  Смотреть кейсы
+                <span className="absolute inset-0 bg-black/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+                <span className="relative z-10 text-sm tracking-[0.2em] uppercase">
+                  Обсудить сайт
                 </span>
                 <svg
-                  className="relative z-10 w-5 h-5 text-gold group-hover:text-background transition-colors duration-500 transform group-hover:translate-x-1"
+                  className="relative z-10 w-5 h-5 text-background transition-transform duration-500 transform group-hover:translate-x-1"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -309,7 +309,18 @@ export default function Hero() {
                   />
                 </svg>
               </a>
+
+              <a
+                href="#cases"
+                className="group relative inline-flex items-center justify-center rounded-full px-10 py-5 border border-white/15 bg-white/[0.02] text-sm tracking-[0.2em] uppercase text-white/85 transition-all duration-300 hover:border-white/30 hover:bg-white/[0.06]"
+              >
+                Смотреть кейсы
+              </a>
             </div>
+
+            <p className="mt-4 text-xs tracking-[0.14em] text-white/40">
+              Договор · этапы видны · 30 дней поддержки после запуска
+            </p>
           </div>
 
           {/* Right: premium preview-card (lighter, high-contrast) */}

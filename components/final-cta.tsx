@@ -66,9 +66,9 @@ export default function FinalCTA() {
           </p>
 
           <h2 className="text-4xl md:text-6xl lg:text-8xl font-bold tracking-[-0.02em] mb-8 leading-[0.95]">
-            <span className="text-foreground">Готовы создать</span>
+            <span className="text-foreground">Есть задача или идея?</span>
             <br />
-            <span className="text-gradient">что-то особенное?</span>
+            <span className="text-gradient">Обсудим.</span>
           </h2>
 
           <p className="text-lg md:text-xl text-muted-foreground font-light max-w-lg mx-auto mb-12">
@@ -113,6 +113,10 @@ export default function FinalCTA() {
               </svg>
             </a>
           </div>
+
+          <p className="mt-5 text-xs tracking-[0.14em] text-white/60">
+            Ответим в течение дня
+          </p>
 
           {/* Email display */}
           <div className="mt-16">
