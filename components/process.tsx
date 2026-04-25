@@ -82,7 +82,7 @@ export default function Process() {
           </div>
 
           <p className="mt-6 text-sm text-white/50 text-center">
-            Каждый этап виден заранее: структура, дизайн, запуск и поддержка.
+            Каждый этап виден заранее: структура, запуск и поддержка. После запуска не исчезаем — помогаем с правками и вопросами.
           </p>
 
           <div className="mt-12 p-6 border border-gold/20 bg-gold/5 flex flex-col md:flex-row items-center justify-between gap-4">

@@ -36,7 +36,7 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
           </svg>
         </div>
         <h3 className="text-xl font-bold mb-2 text-foreground">Заявка отправлена</h3>
-        <p className="text-muted-foreground">Мы свяжемся с вами в течение 2 часов</p>
+        <p className="text-muted-foreground">Ответим в течение дня</p>
       </div>
     )
   }
@@ -100,6 +100,9 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
           {isSubmitting ? 'Отправка...' : 'Обсудить сайт'}
         </button>
         <p className="text-xs text-muted-foreground text-center">
+          Ответим в течение дня
+        </p>
+        <p className="text-xs text-muted-foreground text-center">
           Без спама. Только ответ по вашей задаче.
         </p>
       </form>
@@ -150,6 +153,9 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
       >
         {isSubmitting ? 'Отправка...' : 'Обсудить сайт'}
       </button>
+      <p className="text-xs text-muted-foreground text-center">
+        Ответим в течение дня
+      </p>
       <p className="text-xs text-muted-foreground text-center pt-2">
         Без спама. Только ответ по вашей задаче.
       </p>

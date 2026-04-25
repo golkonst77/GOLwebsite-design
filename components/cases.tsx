@@ -9,12 +9,12 @@ const cases = [
     title: 'Сайт для бухгалтерской компании',
     category: 'Сайт услуг',
     description:
-      'Было: сайт не объяснял ценность услуг и выглядел устаревшим.\nСделали: пересобрали структуру, оффер и путь к заявке.',
-    result: 'Результат: стало понятнее, почему обратиться и что делать дальше.',
+      'Было: клиенты не понимали, в чём разница и почему выбрать компанию.\nСделали: пересобрали структуру, оффер и подачу услуг.\nРезультат: сайт стал понятным и начал вести человека к обращению.',
+    result: 'Результат: стало понятнее, за что вы платите и что делать дальше.',
     metrics: [
-      { label: 'Структура', value: 'яснее' },
-      { label: 'Оффер', value: 'понятнее' },
-      { label: 'CTA', value: 'чётче' },
+      { label: 'Понимание услуги', value: 'выше' },
+      { label: 'Ценность', value: 'яснее' },
+      { label: 'Путь к заявке', value: 'понятнее' },
     ],
   },
   {
@@ -22,12 +22,12 @@ const cases = [
     title: 'Сайт для локального бизнеса',
     category: 'Локальный бизнес',
     description:
-      'Было: посетители заходили, но не понимали преимущества компании.\nСделали: сделали ясный первый экран, блоки доверия и понятные CTA.',
-    result: 'Результат: сайт стал лучше вести человека к обращению.',
+      'Было: клиенты не понимали, в чём разница и почему выбрать компанию.\nСделали: пересобрали структуру, оффер и подачу услуг.\nРезультат: сайт стал понятным и начал вести человека к обращению.',
+    result: 'Результат: проще разобраться и быстрее перейти к обращению.',
     metrics: [
-      { label: 'Первый экран', value: 'яснее' },
-      { label: 'Доверие', value: 'спокойнее' },
-      { label: 'CTA', value: 'понятнее' },
+      { label: 'Понимание услуги', value: 'выше' },
+      { label: 'Ценность', value: 'яснее' },
+      { label: 'Путь к заявке', value: 'понятнее' },
     ],
   },
   {
@@ -35,12 +35,12 @@ const cases = [
     title: 'Сайт для услуг',
     category: 'Сайт услуг',
     description:
-      'Было: услуги были описаны сложно, без понятного сценария выбора.\nСделали: упростили подачу, добавили структуру и спокойный визуал.',
-    result: 'Результат: клиент быстрее понимает услугу и следующий шаг.',
+      'Было: клиенты не понимали, в чём разница и почему выбрать компанию.\nСделали: пересобрали структуру, оффер и подачу услуг.\nРезультат: сайт стал понятным и начал вести человека к обращению.',
+    result: 'Результат: понятнее ценность и следующий шаг.',
     metrics: [
-      { label: 'Подача', value: 'проще' },
-      { label: 'Структура', value: 'чётче' },
-      { label: 'Визуал', value: 'спокойнее' },
+      { label: 'Понимание услуги', value: 'выше' },
+      { label: 'Ценность', value: 'яснее' },
+      { label: 'Путь к заявке', value: 'понятнее' },
     ],
   },
 ]
@@ -119,27 +119,35 @@ export default function Cases() {
               <div className="text-center md:text-left">
                 <p className="text-lg font-semibold text-foreground">Похоже на вашу задачу?</p>
                 <p className="mt-1 text-muted-foreground">
-                  Обсудим, какой сайт нужен именно вам.
+                  Разберём, какой сайт нужен именно вам.
                 </p>
               </div>
-              <a
-                href="#contact"
-                className="group relative inline-flex h-12 items-center justify-center rounded-full bg-gold px-8 text-sm font-medium tracking-[0.12em] text-background transition-transform duration-300 ease-out supports-[hover:hover]:hover:-translate-y-[1px] active:translate-y-0"
-              >
-                Обсудить сайт
-              </a>
+              <div className="flex flex-col items-center gap-2">
+                <a
+                  href="#contact"
+                  className="group relative inline-flex items-center gap-4 rounded-full bg-gold px-10 py-5 text-background shadow-[0_18px_50px_rgba(212,175,55,0.18)] transition-transform duration-500 ease-out overflow-hidden supports-[hover:hover]:hover:-translate-y-[1px] active:translate-y-0"
+                >
+                  <span className="absolute inset-0 bg-black/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+                  <span className="relative z-10 text-sm tracking-[0.2em] uppercase">
+                    Обсудить сайт
+                  </span>
+                </a>
+                <p className="text-xs tracking-[0.14em] text-white/50">
+                  Ответим в течение дня
+                </p>
+              </div>
             </div>
           </div>
 
           <div className="mt-12 text-center">
             <p className="text-muted-foreground mb-4">
-              Хотите такие же результаты?
+              Есть задача по сайту?
             </p>
             <a
               href="#contact"
               className="inline-block px-8 py-4 border border-gold text-gold font-bold hover:bg-gold hover:text-background transition-all duration-300 tracking-wider uppercase text-sm"
             >
-              Обсудить ваш проект
+              Обсудить сайт
             </a>
           </div>
         </div>
