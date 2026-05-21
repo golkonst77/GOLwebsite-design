@@ -3,7 +3,7 @@
 Маркетинговый лендинг веб-студии **GØL**: премиальный одностраничный сайт с формой заявки и отправкой писем на почту через Yandex SMTP.
 
 **Production:** https://golwebstudio.ru  
-**Текущая версия (semver):** `1.2.0` (отображается в футере как `v1.2.0 · build <git-hash>`)
+**Текущая версия (semver):** `1.2.1` (отображается в футере как `v1.2.1 · build <git-hash>`)
 
 ---
 
@@ -153,6 +153,7 @@ npm run start
 
 | Дата | Версия | Изменение |
 |------|--------|-----------|
+| 2026-05-20 | 1.2.1 | Реквизиты ИП в privacy.md (ИНН, ОГРНИП, адрес) |
 | 2026-05-20 | 1.2.0 | Privacy: /privacy, cookie consent banner, checkbox в lead-form, API CONSENT_REQUIRED |
 | 2026-05-20 | docs | GOL_DESIGN_SYSTEM (master design bible) |
 | 2026-05-20 | docs | UI_GUIDELINES, COMPONENT_MAP, CONTENT_STRATEGY |
