@@ -1,6 +1,8 @@
 'use client'
 
+import Link from 'next/link'
 import { useState, type FormEvent } from 'react'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface LeadFormProps {
   variant?: 'default' | 'compact' | 'inline' | 'contact'
@@ -12,6 +14,7 @@ const SUBMIT_ERROR_MESSAGE =
 
 const PHONE_PLACEHOLDER = '+7 (___) ___-__-__'
 const PHONE_ERROR_MESSAGE = 'Введите телефон в формате +7 (999) 999-99-99'
+const CONSENT_ERROR_MESSAGE = 'Нужно согласие на обработку персональных данных'
 
 function extractPhoneDigits(value: string): string {
   return value.replace(/\D/g, '')
@@ -100,6 +103,41 @@ function SubmitError({ message }: { message: string }) {
   return <p className="mt-3 text-center text-sm text-red-400 leading-relaxed">{message}</p>
 }
 
+function ConsentCheckbox({
+  checked,
+  onCheckedChange,
+  className = '',
+}: {
+  checked: boolean
+  onCheckedChange: (value: boolean) => void
+  className?: string
+}) {
+  return (
+    <div
+      className={`flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-3 ${className}`}
+    >
+      <Checkbox
+        id="lead-consent-pd"
+        checked={checked}
+        onCheckedChange={(value) => onCheckedChange(value === true)}
+        className="mt-0.5 border-white/20 data-[state=checked]:border-gold data-[state=checked]:bg-gold data-[state=checked]:text-black"
+      />
+      <label
+        htmlFor="lead-consent-pd"
+        className="cursor-pointer text-sm leading-snug text-white/70"
+      >
+        Я согласен на обработку{' '}
+        <Link
+          href="/privacy"
+          className="text-gold/90 underline underline-offset-2 transition-colors hover:text-gold"
+        >
+          персональных данных
+        </Link>
+      </label>
+    </div>
+  )
+}
+
 export default function LeadForm({ variant = 'default', className = '' }: LeadFormProps) {
   const [formData, setFormData] = useState({
     name: '',
@@ -111,9 +149,17 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [phoneError, setPhoneError] = useState<string | null>(null)
+  const [consentPd, setConsentPd] = useState(false)
+  const [consentError, setConsentError] = useState<string | null>(null)
 
   const clearSubmitError = () => {
     setSubmitError(null)
+  }
+
+  const updateConsent = (value: boolean) => {
+    clearSubmitError()
+    setConsentError(null)
+    setConsentPd(value)
   }
 
   const updateField = (field: keyof typeof formData, value: string) => {
@@ -141,9 +187,15 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
   const handleSubmit = async () => {
     clearSubmitError()
     setPhoneError(null)
+    setConsentError(null)
     setIsSubmitting(true)
 
     try {
+      if (!consentPd) {
+        setConsentError(CONSENT_ERROR_MESSAGE)
+        return
+      }
+
       const name = formData.name.trim() || (variant === 'inline' ? 'Не указано' : '')
       const contact = formData.contact.trim()
       const message =
@@ -165,6 +217,7 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
           contact,
           message,
           website,
+          consent: true,
         }),
       })
 
@@ -173,6 +226,8 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
       if (!response.ok) {
         if (data.error === 'INVALID_PHONE') {
           setPhoneError(PHONE_ERROR_MESSAGE)
+        } else if (data.error === 'CONSENT_REQUIRED') {
+          setConsentError(CONSENT_ERROR_MESSAGE)
         } else {
           setSubmitError(SUBMIT_ERROR_MESSAGE)
         }
@@ -183,6 +238,7 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
         clearSubmitError()
         setFormData({ name: '', contact: '', message: '' })
         setWebsite('')
+        setConsentPd(false)
         setIsSubmitted(true)
         return
       }
@@ -227,28 +283,32 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
 
   if (variant === 'inline') {
     return (
-      <form onSubmit={onFormSubmit} className={`relative flex flex-col sm:flex-row gap-4 ${className}`}>
+      <form onSubmit={onFormSubmit} className={`relative flex flex-col gap-4 ${className}`}>
         <HoneypotField value={website} onChange={updateWebsite} />
-        <div className="flex-1">
-          <input
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            placeholder={PHONE_PLACEHOLDER}
-            value={formData.contact}
-            onChange={(e) => updatePhone(e.target.value)}
-            required
-            className="w-full px-6 py-4 bg-card border border-border text-foreground placeholder:text-muted-foreground focus:border-neon-green focus:outline-none transition-colors"
-          />
-          {phoneError ? <SubmitError message={phoneError} /> : null}
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="flex-1">
+            <input
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder={PHONE_PLACEHOLDER}
+              value={formData.contact}
+              onChange={(e) => updatePhone(e.target.value)}
+              required
+              className="w-full px-6 py-4 bg-card border border-border text-foreground placeholder:text-muted-foreground focus:border-neon-green focus:outline-none transition-colors"
+            />
+            {phoneError ? <SubmitError message={phoneError} /> : null}
+          </div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={`${GOLD_SUBMIT_BUTTON_CLASS} sm:w-auto sm:min-w-[200px]`}
+          >
+            {isSubmitting ? 'Отправка...' : 'Обсудить сайт'}
+          </button>
         </div>
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`${GOLD_SUBMIT_BUTTON_CLASS} sm:w-auto sm:min-w-[200px]`}
-        >
-          {isSubmitting ? 'Отправка...' : 'Обсудить сайт'}
-        </button>
+        <ConsentCheckbox checked={consentPd} onCheckedChange={updateConsent} />
+        {consentError ? <SubmitError message={consentError} /> : null}
         {submitError ? <SubmitError message={submitError} /> : null}
       </form>
     )
@@ -298,6 +358,8 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
             className={`${fieldClass} min-h-[88px] h-auto py-3 resize-none leading-relaxed`}
           />
         </div>
+        <ConsentCheckbox checked={consentPd} onCheckedChange={updateConsent} />
+        {consentError ? <SubmitError message={consentError} /> : null}
         <div className="pt-1">
           <button type="submit" disabled={isSubmitting} className={submitButtonClass}>
             {isSubmitting ? 'Отправка...' : 'Отправить заявку'}
@@ -344,6 +406,8 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
           rows={3}
           className="w-full px-5 py-4 bg-card border border-border text-foreground placeholder:text-muted-foreground focus:border-neon-green focus:outline-none transition-colors resize-none"
         />
+        <ConsentCheckbox checked={consentPd} onCheckedChange={updateConsent} />
+        {consentError ? <SubmitError message={consentError} /> : null}
         <button type="submit" disabled={isSubmitting} className={GOLD_SUBMIT_BUTTON_CLASS}>
           {isSubmitting ? 'Отправка...' : 'Обсудить сайт'}
         </button>
@@ -399,6 +463,8 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
           className="w-full px-5 py-4 bg-card border border-border text-foreground placeholder:text-muted-foreground focus:border-neon-green focus:outline-none transition-colors resize-none"
         />
       </div>
+      <ConsentCheckbox checked={consentPd} onCheckedChange={updateConsent} />
+      {consentError ? <SubmitError message={consentError} /> : null}
       <button type="submit" disabled={isSubmitting} className={GOLD_SUBMIT_BUTTON_CLASS}>
         {isSubmitting ? 'Отправка...' : 'Обсудить сайт'}
       </button>

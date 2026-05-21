@@ -153,6 +153,7 @@ npm run start
 
 | Дата | Версия | Изменение |
 |------|--------|-----------|
+| 2026-05-20 | 1.2.0 | Privacy: /privacy, cookie consent banner, checkbox в lead-form, API CONSENT_REQUIRED |
 | 2026-05-20 | docs | GOL_DESIGN_SYSTEM (master design bible) |
 | 2026-05-20 | docs | UI_GUIDELINES, COMPONENT_MAP, CONTENT_STRATEGY |
 | 2026-05 | 1.2.0 | Телефонная маска, SMTP IPv6, документация, полировка секций |

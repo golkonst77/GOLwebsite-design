@@ -150,17 +150,20 @@ function buildLeadEmailHtml({
   contact,
   message,
   sentAt,
+  consentAt,
 }: {
   name: string
   contact: string
   message: string
   sentAt: string
+  consentAt: string
 }): string {
   const displayMessage = message.trim() ? message : EMPTY_MESSAGE_FALLBACK
   const safeName = escapeHtml(name)
   const safeContact = escapeHtml(contact)
   const safeMessage = escapeHtml(displayMessage).replace(/\n/g, '<br>')
   const safeDate = escapeHtml(sentAt)
+  const safeConsentAt = escapeHtml(consentAt)
 
   const fieldBlock = (label: string, value: string) => `
     <tr>
@@ -199,7 +202,10 @@ function buildLeadEmailHtml({
                     <p style="margin:0 0 10px 0;font-size:10px;line-height:1.4;letter-spacing:0.16em;text-transform:uppercase;color:#8a8478;">Дата</p>
                     <p style="margin:0 0 14px 0;font-size:15px;line-height:1.5;color:#171717;">${safeDate}</p>
                     <p style="margin:0 0 6px 0;font-size:10px;line-height:1.4;letter-spacing:0.16em;text-transform:uppercase;color:#8a8478;">Источник</p>
-                    <p style="margin:0;font-size:15px;line-height:1.5;color:#171717;">gol.studio</p>
+                    <p style="margin:0 0 14px 0;font-size:15px;line-height:1.5;color:#171717;">gol.studio</p>
+                    <p style="margin:0 0 6px 0;font-size:10px;line-height:1.4;letter-spacing:0.16em;text-transform:uppercase;color:#8a8478;">Согласие на обработку ПД</p>
+                    <p style="margin:0 0 6px 0;font-size:15px;line-height:1.5;color:#171717;">Получено</p>
+                    <p style="margin:0;font-size:13px;line-height:1.5;color:#6f6a62;">${safeConsentAt}</p>
                   </td>
                 </tr>
               </table>
@@ -215,11 +221,13 @@ function buildLeadEmailText({
   contact,
   message,
   sentAt,
+  consentAt,
 }: {
   name: string
   contact: string
   message: string
   sentAt: string
+  consentAt: string
 }): string {
   const displayMessage = message.trim() ? message : EMPTY_MESSAGE_FALLBACK
 
@@ -234,6 +242,8 @@ ${displayMessage}
 
 Дата: ${sentAt}
 Источник: gol.studio
+Согласие на обработку ПД: получено
+Дата согласия: ${consentAt}
 
 —
 GØL Web Studio
@@ -253,7 +263,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
-    // 3. Нормализация
+    // 3. Согласие на обработку ПД
+    if (body?.consent !== true) {
+      return NextResponse.json({ ok: false, error: 'CONSENT_REQUIRED' }, { status: 400 })
+    }
+
+    // 4. Нормализация
     const name = trimField(body?.name)
     const contactRaw = trimField(body?.contact)
     const message = trimField(body?.message)
@@ -265,7 +280,7 @@ export async function POST(request: NextRequest) {
 
     const contact = phoneResult.formatted
 
-    // 4. Валидация
+    // 5. Валидация
     if (!name || !contact || !message) {
       return NextResponse.json({ ok: false, error: 'VALIDATION_ERROR' }, { status: 400 })
     }
@@ -274,7 +289,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: 'VALIDATION_ERROR' }, { status: 400 })
     }
 
-    // 5. Rate limit
+    // 6. Rate limit
     const clientIp = getClientIp(request)
     if (isRateLimited(clientIp)) {
       return NextResponse.json(
@@ -289,12 +304,13 @@ export async function POST(request: NextRequest) {
       dateStyle: 'long',
       timeStyle: 'short',
     })
+    const consentAt = sentAt
 
     const subject = buildSubject(name)
-    const html = buildLeadEmailHtml({ name, contact, message, sentAt })
-    const text = buildLeadEmailText({ name, contact, message, sentAt })
+    const html = buildLeadEmailHtml({ name, contact, message, sentAt, consentAt })
+    const text = buildLeadEmailText({ name, contact, message, sentAt, consentAt })
 
-    // 6. Письмо админу
+    // 7. Письмо админу
     const adminResult = await sendEmail({
       to,
       subject,
@@ -306,7 +322,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: 'SEND_FAILED' }, { status: 500 })
     }
 
-    // 7. Успех + учёт rate limit
+    // 8. Успех + учёт rate limit
     recordSuccessfulSubmission(clientIp)
 
     return NextResponse.json({ ok: true })

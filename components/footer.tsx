@@ -1,4 +1,5 @@
 import BuildVersion from '@/components/build-version'
+import { FooterLegalLinks } from '@/components/footer-legal-links'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -99,10 +100,11 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex flex-col items-center gap-2 md:items-start">
+          <div className="flex flex-col items-center gap-3 md:items-start">
             <p className="text-muted-foreground text-sm">
               © {currentYear} GØL. Все права защищены.
             </p>
+            <FooterLegalLinks />
             <BuildVersion />
           </div>
           <a
