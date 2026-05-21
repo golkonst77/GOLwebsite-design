@@ -72,19 +72,20 @@ async function sendViaYandex({
   password: string
 }): Promise<{ success: boolean; messageId?: string; error?: string }> {
   const transporter = nodemailer.createTransport({
-    host: 'smtp.yandex.ru',
+    host: '2a02:6b8::19d',
     port: 587,
     secure: false,
+    requireTLS: true,
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
+    tls: {
+      servername: 'smtp.yandex.ru',
+    },
     auth: {
       user: email,
       pass: password,
     },
-    tls: {
-      rejectUnauthorized: false,
-    },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
   })
 
   try {
