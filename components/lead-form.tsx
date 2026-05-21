@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 
 interface LeadFormProps {
   variant?: 'default' | 'compact' | 'inline' | 'contact'
@@ -64,8 +64,13 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
     setWebsite(value)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    e.stopPropagation()
+    void handleSubmit()
+  }
+
+  const handleSubmit = async () => {
     clearSubmitError()
     setIsSubmitting(true)
 
@@ -78,7 +83,9 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
 
       const response = await fetch('/api/lead', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           name,
           contact,
@@ -87,17 +94,22 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
         }),
       })
 
-      const data = (await response.json().catch(() => null)) as { ok?: boolean } | null
-
-      if (!response.ok || !data?.ok) {
+      if (!response.ok) {
         setSubmitError(SUBMIT_ERROR_MESSAGE)
         return
       }
 
-      clearSubmitError()
-      setFormData({ name: '', contact: '', message: '' })
-      setWebsite('')
-      setIsSubmitted(true)
+      const data = (await response.json()) as { ok?: boolean }
+
+      if (data.ok === true) {
+        clearSubmitError()
+        setFormData({ name: '', contact: '', message: '' })
+        setWebsite('')
+        setIsSubmitted(true)
+        return
+      }
+
+      setSubmitError(SUBMIT_ERROR_MESSAGE)
     } catch {
       setSubmitError(SUBMIT_ERROR_MESSAGE)
     } finally {
@@ -137,7 +149,7 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
 
   if (variant === 'inline') {
     return (
-      <form onSubmit={handleSubmit} className={`relative flex flex-col sm:flex-row gap-4 ${className}`}>
+      <form onSubmit={onFormSubmit} className={`relative flex flex-col sm:flex-row gap-4 ${className}`}>
         <HoneypotField value={website} onChange={updateWebsite} />
         <input
           type="text"
@@ -166,10 +178,7 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
     const submitButtonClass = `mt-7 ${GOLD_SUBMIT_BUTTON_CLASS}`
 
     return (
-      <form
-        onSubmit={handleSubmit}
-        className={`relative flex w-full flex-col gap-4 ${className}`}
-      >
+      <form onSubmit={onFormSubmit} className={`relative flex w-full flex-col gap-4 ${className}`}>
         <HoneypotField value={website} onChange={updateWebsite} />
         <div>
           <label className={labelClass}>Имя</label>
@@ -218,7 +227,7 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
 
   if (variant === 'compact') {
     return (
-      <form onSubmit={handleSubmit} className={`relative space-y-4 ${className}`}>
+      <form onSubmit={onFormSubmit} className={`relative space-y-4 ${className}`}>
         <HoneypotField value={website} onChange={updateWebsite} />
         <p className="text-sm text-muted-foreground">
           Расскажите коротко о задаче — ответим в течение дня и подскажем, с чего начать.
@@ -261,7 +270,7 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
   }
 
   return (
-    <form onSubmit={handleSubmit} className={`relative space-y-5 ${className}`}>
+    <form onSubmit={onFormSubmit} className={`relative space-y-5 ${className}`}>
       <HoneypotField value={website} onChange={updateWebsite} />
       <p className="text-muted-foreground">
         Расскажите коротко о задаче — ответим в течение дня и подскажем, с чего начать.

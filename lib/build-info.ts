@@ -1,14 +1,26 @@
 import { execSync } from 'child_process'
+import pkg from '@/package.json'
 
-export function getBuildVersion(): string {
+function getGitShortHash(): string | null {
   try {
     const hash = execSync('git rev-parse --short HEAD', {
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
     }).trim()
 
-    return hash ? `build ${hash}` : 'local build'
+    return hash || null
   } catch {
-    return 'local build'
+    return null
   }
+}
+
+export function getBuildVersion(): string {
+  const semver = `v${pkg.version}`
+  const hash = getGitShortHash()
+
+  if (hash) {
+    return `${semver} · build ${hash}`
+  }
+
+  return semver
 }
