@@ -41,12 +41,12 @@ export default function Process() {
   const isInView = useInView(ref, { once: true })
 
   return (
-    <section id="process" className="py-20 md:py-32 px-6 relative overflow-hidden border-t border-border" ref={ref}>
+    <section id="process" className="px-6 pt-8 pb-14 md:pt-12 md:pb-20 lg:pt-16 lg:pb-24 relative overflow-hidden border-t border-border" ref={ref}>
       <div className="max-w-6xl mx-auto relative z-10">
         <div
           className={`transform transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 md:mb-12">
             <p className="text-gold text-sm tracking-[0.3em] uppercase mb-4">
               Как мы работаем
             </p>
@@ -81,11 +81,11 @@ export default function Process() {
             ))}
           </div>
 
-          <p className="mt-6 text-sm text-white/50 text-center">
+          <p className="mt-4 text-sm text-white/50 text-center">
             Каждый этап виден заранее: структура, запуск и поддержка. После запуска не исчезаем — помогаем с правками и вопросами.
           </p>
 
-          <div className="mt-12 p-6 border border-gold/20 bg-gold/5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="mt-8 p-6 border border-gold/20 bg-gold/5 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Общий срок</p>
               <p className="text-2xl font-bold text-foreground">2-3 недели</p>
@@ -98,7 +98,7 @@ export default function Process() {
             </a>
           </div>
 
-          <p className="mt-6 text-sm text-white/60 text-center">
+          <p className="mt-4 text-sm text-white/60 text-center">
             От первого контакта до запуска — обычно 2–3 недели. Без спешки. Без лишнего.
           </p>
         </div>

@@ -31,6 +31,15 @@ const problems = [
     title: 'Сайт не объясняет ценность — поэтому человек уходит.',
     description: 'Сравнение занимает минуту: если не ясно “почему вы”, выбирают другого.',
   },
+  {
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      </svg>
+    ),
+    title: 'Сайт не вызывает доверия с первого экрана',
+    description: 'Нет доказательств, процесса и понятного объяснения — клиент не рискует писать.',
+  },
 ]
 
 export default function Problem() {
@@ -38,12 +47,12 @@ export default function Problem() {
   const isInView = useInView(ref, { once: true })
 
   return (
-    <section className="py-20 md:py-32 px-6 relative overflow-hidden border-t border-border" ref={ref}>
+    <section className="py-14 md:py-20 lg:py-24 px-6 relative overflow-hidden border-t border-border" ref={ref}>
       <div className="max-w-6xl mx-auto relative z-10">
         <div
           className={`transform transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 md:mb-12">
             <p className="text-sm tracking-[0.3em] uppercase mb-4 text-muted-foreground">
               Знакомо?
             </p>
@@ -76,7 +85,7 @@ export default function Problem() {
             ))}
           </div>
 
-          <div className="mt-12 p-6 md:p-8 border border-neon-green/20 bg-neon-green/5 text-center">
+          <div className="mt-8 p-6 md:p-8 border border-neon-green/20 bg-neon-green/5 text-center">
             <p className="text-lg md:text-xl text-foreground">
               <span className="text-neon-green font-bold">Это решаемо:</span> обычно достаточно 2-3 недель спокойной, системной работы.
             </p>

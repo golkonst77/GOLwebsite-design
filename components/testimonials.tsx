@@ -33,7 +33,7 @@ export default function Testimonials() {
   return (
     <section 
       id="testimonials" 
-      className="relative py-32 md:py-48 px-6 md:px-12 overflow-hidden"
+      className="relative py-14 md:py-20 lg:py-24 px-6 md:px-12 overflow-hidden"
       ref={ref}
     >
       {/* Background accent */}
@@ -44,9 +44,9 @@ export default function Testimonials() {
       <div className="max-w-[1200px] mx-auto relative z-10">
         {/* Section header */}
         <div 
-          className={`text-center mb-20 md:mb-32 transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+          className={`text-center mb-8 md:mb-10 transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <p className="text-sm tracking-[0.4em] uppercase text-gold mb-6">
+          <p className="text-sm tracking-[0.4em] uppercase text-gold mb-4">
             Отзывы
           </p>
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.02em]">
@@ -59,8 +59,8 @@ export default function Testimonials() {
         <div 
           className={`transition-all duration-1000 delay-200 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="text-center mb-16">
-            <blockquote className="text-2xl md:text-4xl lg:text-5xl font-light leading-tight text-foreground mb-12">
+          <div className="text-center mb-8 md:mb-10">
+            <blockquote className="text-2xl md:text-4xl lg:text-5xl font-light leading-tight text-foreground mb-8">
               &ldquo;{testimonials[activeIndex].quote}&rdquo;
             </blockquote>
             <div className="flex flex-col items-center gap-2">

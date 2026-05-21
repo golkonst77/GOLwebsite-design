@@ -40,14 +40,14 @@ export default function Trust() {
   const isInView = useInView(ref, { once: true })
 
   return (
-    <section className="py-20 md:py-32 px-6 relative overflow-hidden border-t border-border" ref={ref}>
+    <section className="py-14 md:py-20 lg:py-24 px-6 relative overflow-hidden border-t border-border" ref={ref}>
       <div className="max-w-6xl mx-auto relative z-10">
         <div
           className={`transform transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           {/* Stats */}
           {stats.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
               {stats.map((stat, index) => (
                 <div
                   key={index}
@@ -66,7 +66,7 @@ export default function Trust() {
           ) : null}
 
           {/* Guarantees */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-10">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
               Работаем <span className="text-neon-green">прозрачно</span>
             </h2>

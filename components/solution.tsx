@@ -36,12 +36,12 @@ export default function Solution() {
   const isInView = useInView(ref, { once: true })
 
   return (
-    <section className="py-20 md:py-32 px-6 relative overflow-hidden border-t border-border" ref={ref}>
+    <section className="px-6 pt-14 pb-8 md:pt-20 md:pb-10 lg:pt-24 lg:pb-12 relative overflow-hidden border-t border-border" ref={ref}>
       <div className="max-w-6xl mx-auto relative z-10">
         <div
           className={`transform transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 md:mb-12">
             <p className="text-neon-green text-sm tracking-[0.3em] uppercase mb-4">
               Решение
             </p>

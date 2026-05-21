@@ -50,12 +50,12 @@ export default function Cases() {
   const isInView = useInView(ref, { once: true })
 
   return (
-    <section id="cases" className="py-20 md:py-32 px-6 relative overflow-hidden border-t border-border" ref={ref}>
+    <section id="cases" className="py-14 md:py-20 lg:py-24 px-6 relative overflow-hidden border-t border-border" ref={ref}>
       <div className="max-w-6xl mx-auto relative z-10">
         <div
           className={`transform transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 md:mb-12">
             <p className="text-gold text-sm tracking-[0.3em] uppercase mb-4">
               Результаты
             </p>
@@ -114,7 +114,7 @@ export default function Cases() {
             ))}
           </div>
 
-          <div className="mt-10 border border-border bg-card/30 p-6 md:p-8">
+          <div className="mt-8 border border-border bg-card/30 p-6 md:p-8">
             <div className="flex flex-col items-center justify-between gap-5 md:flex-row">
               <div className="text-center md:text-left">
                 <p className="text-lg font-semibold text-foreground">Похоже на вашу задачу?</p>
@@ -139,7 +139,7 @@ export default function Cases() {
             </div>
           </div>
 
-          <div className="mt-12 text-center">
+          <div className="mt-8 text-center">
             <p className="text-muted-foreground mb-4">
               Есть задача по сайту?
             </p>
