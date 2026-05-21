@@ -10,6 +10,67 @@ interface LeadFormProps {
 const SUBMIT_ERROR_MESSAGE =
   'Не получилось отправить форму. Напишите напрямую: golwebstudio@mail.ru или @teodor77.'
 
+const PHONE_PLACEHOLDER = '+7 (___) ___-__-__'
+const PHONE_ERROR_MESSAGE = 'Введите телефон в формате +7 (999) 999-99-99'
+
+function extractPhoneDigits(value: string): string {
+  return value.replace(/\D/g, '')
+}
+
+function formatPhoneInput(raw: string): string {
+  let digits = extractPhoneDigits(raw)
+
+  if (digits.startsWith('8')) {
+    digits = `7${digits.slice(1)}`
+  } else if (digits.length > 0 && !digits.startsWith('7')) {
+    digits = `7${digits}`
+  }
+
+  digits = digits.slice(0, 11)
+
+  if (digits.length === 0) {
+    return ''
+  }
+
+  if (!digits.startsWith('7')) {
+    digits = `7${digits}`.slice(0, 11)
+  }
+
+  const rest = digits.slice(1)
+  let formatted = '+7'
+
+  if (rest.length === 0) {
+    return formatted
+  }
+
+  formatted += ` (${rest.slice(0, 3)}`
+
+  if (rest.length <= 3) {
+    return formatted
+  }
+
+  formatted += `) ${rest.slice(3, 6)}`
+
+  if (rest.length <= 6) {
+    return formatted
+  }
+
+  formatted += `-${rest.slice(6, 8)}`
+
+  if (rest.length <= 8) {
+    return formatted
+  }
+
+  formatted += `-${rest.slice(8, 10)}`
+
+  return formatted
+}
+
+function isValidRussianPhone(value: string): boolean {
+  const digits = extractPhoneDigits(value)
+  return digits.length === 11 && digits.startsWith('7')
+}
+
 /** bg-neon-green не в theme — без hex-кнопка невидима на тёмном фоне */
 const GOLD_SUBMIT_BUTTON_CLASS =
   'w-full min-h-[56px] rounded-full border border-[#d8b63f]/80 bg-[#d8b63f] px-8 text-sm font-semibold tracking-[0.14em] uppercase text-black opacity-100 shadow-[0_18px_50px_rgba(212,175,55,0.22)] transition-all duration-300 ease-out hover:bg-[#e4c55e] hover:border-[#e4c55e]/80 hover:shadow-[0_22px_58px_rgba(212,175,55,0.32)] active:translate-y-0 supports-[hover:hover]:hover:-translate-y-[1px] disabled:cursor-wait disabled:opacity-80'
@@ -49,6 +110,7 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [phoneError, setPhoneError] = useState<string | null>(null)
 
   const clearSubmitError = () => {
     setSubmitError(null)
@@ -57,6 +119,12 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
   const updateField = (field: keyof typeof formData, value: string) => {
     clearSubmitError()
     setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const updatePhone = (raw: string) => {
+    clearSubmitError()
+    setPhoneError(null)
+    setFormData((prev) => ({ ...prev, contact: formatPhoneInput(raw) }))
   }
 
   const updateWebsite = (value: string) => {
@@ -72,6 +140,7 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
 
   const handleSubmit = async () => {
     clearSubmitError()
+    setPhoneError(null)
     setIsSubmitting(true)
 
     try {
@@ -80,6 +149,11 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
       const message =
         formData.message.trim() ||
         (variant === 'inline' ? 'Короткая заявка с сайта' : '')
+
+      if (!isValidRussianPhone(contact)) {
+        setPhoneError(PHONE_ERROR_MESSAGE)
+        return
+      }
 
       const response = await fetch('/api/lead', {
         method: 'POST',
@@ -94,12 +168,16 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
         }),
       })
 
+      const data = (await response.json()) as { ok?: boolean; error?: string }
+
       if (!response.ok) {
-        setSubmitError(SUBMIT_ERROR_MESSAGE)
+        if (data.error === 'INVALID_PHONE') {
+          setPhoneError(PHONE_ERROR_MESSAGE)
+        } else {
+          setSubmitError(SUBMIT_ERROR_MESSAGE)
+        }
         return
       }
-
-      const data = (await response.json()) as { ok?: boolean }
 
       if (data.ok === true) {
         clearSubmitError()
@@ -151,14 +229,19 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
     return (
       <form onSubmit={onFormSubmit} className={`relative flex flex-col sm:flex-row gap-4 ${className}`}>
         <HoneypotField value={website} onChange={updateWebsite} />
-        <input
-          type="text"
-          placeholder="Телефон или Telegram"
-          value={formData.contact}
-          onChange={(e) => updateField('contact', e.target.value)}
-          required
-          className="flex-1 px-6 py-4 bg-card border border-border text-foreground placeholder:text-muted-foreground focus:border-neon-green focus:outline-none transition-colors"
-        />
+        <div className="flex-1">
+          <input
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder={PHONE_PLACEHOLDER}
+            value={formData.contact}
+            onChange={(e) => updatePhone(e.target.value)}
+            required
+            className="w-full px-6 py-4 bg-card border border-border text-foreground placeholder:text-muted-foreground focus:border-neon-green focus:outline-none transition-colors"
+          />
+          {phoneError ? <SubmitError message={phoneError} /> : null}
+        </div>
         <button
           type="submit"
           disabled={isSubmitting}
@@ -192,15 +275,18 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
           />
         </div>
         <div>
-          <label className={labelClass}>Телефон или Telegram</label>
+          <label className={labelClass}>Телефон</label>
           <input
-            type="text"
-            placeholder="@username или номер"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder={PHONE_PLACEHOLDER}
             value={formData.contact}
-            onChange={(e) => updateField('contact', e.target.value)}
+            onChange={(e) => updatePhone(e.target.value)}
             required
             className={fieldClass}
           />
+          {phoneError ? <SubmitError message={phoneError} /> : null}
         </div>
         <div>
           <label className={labelClass}>О задаче</label>
@@ -241,13 +327,16 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
           className="w-full px-5 py-4 bg-card border border-border text-foreground placeholder:text-muted-foreground focus:border-neon-green focus:outline-none transition-colors"
         />
         <input
-          type="text"
-          placeholder="Телефон или Telegram"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          placeholder={PHONE_PLACEHOLDER}
           value={formData.contact}
-          onChange={(e) => updateField('contact', e.target.value)}
+          onChange={(e) => updatePhone(e.target.value)}
           required
           className="w-full px-5 py-4 bg-card border border-border text-foreground placeholder:text-muted-foreground focus:border-neon-green focus:outline-none transition-colors"
         />
+        {phoneError ? <SubmitError message={phoneError} /> : null}
         <textarea
           placeholder="Коротко о задаче"
           value={formData.message}
@@ -287,15 +376,18 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-foreground mb-2">Телефон или Telegram</label>
+        <label className="block text-sm font-medium text-foreground mb-2">Телефон</label>
         <input
-          type="text"
-          placeholder="Телефон или Telegram"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          placeholder={PHONE_PLACEHOLDER}
           value={formData.contact}
-          onChange={(e) => updateField('contact', e.target.value)}
+          onChange={(e) => updatePhone(e.target.value)}
           required
           className="w-full px-5 py-4 bg-card border border-border text-foreground placeholder:text-muted-foreground focus:border-neon-green focus:outline-none transition-colors"
         />
+        {phoneError ? <SubmitError message={phoneError} /> : null}
       </div>
       <div>
         <label className="block text-sm font-medium text-foreground mb-2">Коротко о задаче</label>

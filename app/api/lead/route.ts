@@ -5,8 +5,6 @@ const DEFAULT_LEAD_TO = 'golwebstudio@mail.ru'
 const EMPTY_MESSAGE_FALLBACK = 'Клиент не оставил описание задачи'
 const RATE_LIMIT_MAX = 3
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000
-const AUTO_REPLY_SUBJECT = '[GØL] Заявку получили'
-
 type RateLimitEntry = {
   count: number
   resetAt: number
@@ -76,18 +74,29 @@ function buildSubject(name: string): string {
   return `[GØL] Новая заявка — ${safeName || 'Без имени'}`
 }
 
-function extractReplyTo(contact: string): string | undefined {
-  const trimmed = contact.trim()
-  const direct = trimmed.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
-  if (direct) return direct[0].toLowerCase()
-
-  const embedded = trimmed.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)
-  return embedded?.[0].toLowerCase()
+function extractPhoneDigits(value: string): string {
+  return value.replace(/\D/g, '')
 }
 
-function isValidEmail(email: string): boolean {
-  if (!email || email.length > 254) return false
-  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)
+function normalizeAndFormatPhone(
+  contact: string,
+): { ok: true; formatted: string } | { ok: false } {
+  let digits = extractPhoneDigits(contact)
+
+  if (digits.length === 11 && digits.startsWith('8')) {
+    digits = `7${digits.slice(1)}`
+  } else if (digits.length === 10) {
+    digits = `7${digits}`
+  }
+
+  if (digits.length !== 11 || !digits.startsWith('7')) {
+    return { ok: false }
+  }
+
+  const national = digits.slice(1)
+  const formatted = `+7 (${national.slice(0, 3)}) ${national.slice(3, 6)}-${national.slice(6, 8)}-${national.slice(8, 10)}`
+
+  return { ok: true, formatted }
 }
 
 function buildEmailFooterHtml(): string {
@@ -233,72 +242,6 @@ https://golwebstudio.ru
   `.trim()
 }
 
-function buildAutoReplyEmailHtml(): string {
-  const bodyRows = `
-          <tr>
-            <td style="padding:0 0 20px 0;text-align:center;font-family:Arial,Helvetica,sans-serif;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
-                <tr>
-                  <td style="height:1px;background-color:#d4af37;font-size:0;line-height:0;">&nbsp;</td>
-                </tr>
-              </table>
-              <p style="margin:20px 0 0 0;font-size:22px;line-height:1.35;color:#171717;font-weight:600;">Заявку получили</p>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:0 0 6px 0;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;background-color:#ffffff;border:1px solid #e8e4dc;border-radius:12px;">
-                <tr>
-                  <td style="padding:22px 22px 24px 22px;font-family:Arial,Helvetica,sans-serif;">
-                    <p style="margin:0 0 14px 0;font-size:16px;line-height:1.6;color:#171717;">Спасибо, что написали.</p>
-                    <p style="margin:0 0 14px 0;font-size:16px;line-height:1.6;color:#171717;">Мы посмотрим задачу и ответим в течение дня.</p>
-                    <p style="margin:0 0 8px 0;font-size:10px;line-height:1.4;letter-spacing:0.16em;text-transform:uppercase;color:#8a8478;">Если нужно быстрее</p>
-                    <p style="margin:0;font-size:16px;line-height:1.6;color:#171717;">
-                      можно написать напрямую в Telegram:
-                      <a href="https://t.me/teodor77" style="color:#9a7b2f;text-decoration:none;border-bottom:1px solid rgba(212,175,55,0.45);">@teodor77</a>
-                    </p>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-  `
-
-  return buildEmailShell('Заявку получили — GØL', bodyRows)
-}
-
-function buildAutoReplyEmailText(): string {
-  return `
-GØL Web Studio
-
-Заявку получили
-
-Спасибо, что написали.
-Мы посмотрим задачу и ответим в течение дня.
-
-Если нужно быстрее — можно написать напрямую в Telegram:
-@teodor77
-
-—
-GØL Web Studio
-Чистый дизайн. Сильный результат.
-https://golwebstudio.ru
-  `.trim()
-}
-
-async function sendClientAutoReply(clientEmail: string): Promise<void> {
-  const result = await sendEmail({
-    to: clientEmail,
-    subject: AUTO_REPLY_SUBJECT,
-    html: buildAutoReplyEmailHtml(),
-    text: buildAutoReplyEmailText(),
-  })
-
-  if (!result.success) {
-    console.error('Lead auto-reply failed:', result.error)
-  }
-}
-
 export async function POST(request: NextRequest) {
   try {
     // 1. Прочитать body
@@ -312,8 +255,15 @@ export async function POST(request: NextRequest) {
 
     // 3. Нормализация
     const name = trimField(body?.name)
-    const contact = trimField(body?.contact)
+    const contactRaw = trimField(body?.contact)
     const message = trimField(body?.message)
+
+    const phoneResult = normalizeAndFormatPhone(contactRaw)
+    if (!phoneResult.ok) {
+      return NextResponse.json({ ok: false, error: 'INVALID_PHONE' }, { status: 400 })
+    }
+
+    const contact = phoneResult.formatted
 
     // 4. Валидация
     if (!name || !contact || !message) {
@@ -343,7 +293,6 @@ export async function POST(request: NextRequest) {
     const subject = buildSubject(name)
     const html = buildLeadEmailHtml({ name, contact, message, sentAt })
     const text = buildLeadEmailText({ name, contact, message, sentAt })
-    const replyTo = extractReplyTo(contact)
 
     // 6. Письмо админу
     const adminResult = await sendEmail({
@@ -351,20 +300,13 @@ export async function POST(request: NextRequest) {
       subject,
       html,
       text,
-      ...(replyTo ? { replyTo } : {}),
     })
 
     if (!adminResult.success) {
       return NextResponse.json({ ok: false, error: 'SEND_FAILED' }, { status: 500 })
     }
 
-    // 7. Автоответ клиенту
-    const clientEmail = extractReplyTo(contact)
-    if (clientEmail && isValidEmail(clientEmail)) {
-      await sendClientAutoReply(clientEmail)
-    }
-
-    // 8. Успех + учёт rate limit
+    // 7. Успех + учёт rate limit
     recordSuccessfulSubmission(clientIp)
 
     return NextResponse.json({ ok: true })
