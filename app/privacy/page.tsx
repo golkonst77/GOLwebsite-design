@@ -34,7 +34,7 @@ export default function PrivacyPage() {
       </header>
 
       <article className="mx-auto max-w-3xl px-6 py-10 md:py-14">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-10">
+        <div className="break-words rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-10">
           {renderSimpleMarkdown(policyText)}
         </div>
         <p className="mt-8 text-center text-xs text-white/40">
