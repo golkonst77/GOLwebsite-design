@@ -278,13 +278,13 @@ export default function Hero() {
               style={{ animationDelay: '0.6s' }}
             >
               Чёткая структура, понятный оффер и путь к обращению.
-              <br className="hidden md:block" />
+              <br className="hidden md:block" />{' '}
               Без перегрузки и дизайна ради дизайна.
             </p>
 
             {/* CTA */}
             <div
-              className={`${isVisible ? 'animate-fade-up' : 'opacity-0'} flex items-center gap-3`}
+              className={`${isVisible ? 'animate-fade-up' : 'opacity-0'} flex max-w-full flex-col items-center gap-3 sm:flex-row`}
               style={{ animationDelay: '0.8s' }}
             >
               <a

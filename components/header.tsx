@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface HeaderProps {
   isScrolled: boolean
@@ -9,6 +9,45 @@ interface HeaderProps {
 
 export default function Header({ isScrolled }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!isMenuOpen) return
+    const desktop = window.matchMedia('(min-width: 768px)')
+    if (desktop.matches) {
+      setIsMenuOpen(false)
+      return
+    }
+    const onDesktop = () => {
+      if (desktop.matches) setIsMenuOpen(false)
+    }
+    desktop.addEventListener('change', onDesktop)
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMenuOpen(false)
+        menuButtonRef.current?.focus()
+      }
+      if (event.key === 'Tab') {
+        const lastLink = menuRef.current?.querySelector('a:last-child')
+        if (!event.shiftKey && document.activeElement === lastLink) {
+          event.preventDefault()
+          menuButtonRef.current?.focus()
+        } else if (event.shiftKey && document.activeElement === menuButtonRef.current) {
+          event.preventDefault()
+          if (lastLink instanceof HTMLElement) lastLink.focus()
+        }
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      desktop.removeEventListener('change', onDesktop)
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [isMenuOpen])
 
   return (
     <>
@@ -75,9 +114,13 @@ export default function Header({ isScrolled }: HeaderProps) {
 
           {/* Mobile menu button */}
           <button 
+            ref={menuButtonRef}
+            type="button"
             className="md:hidden flex flex-col gap-1.5 p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
+            aria-label={isMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
+            aria-expanded={isMenuOpen}
+            aria-controls="home-mobile-menu"
           >
             <span className={`w-6 h-px bg-foreground transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1' : ''}`} />
             <span className={`w-6 h-px bg-foreground transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-0.5' : ''}`} />
@@ -87,6 +130,10 @@ export default function Header({ isScrolled }: HeaderProps) {
 
       {/* Mobile menu */}
       <div 
+        ref={menuRef}
+        id="home-mobile-menu"
+        inert={!isMenuOpen}
+        aria-hidden={!isMenuOpen}
         className={`fixed inset-0 z-40 bg-background transition-all duration-500 md:hidden ${
           isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}

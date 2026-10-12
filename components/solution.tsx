@@ -69,8 +69,8 @@ export default function Solution() {
                     <span className="text-2xl font-bold text-neon-green/30 group-hover:text-neon-green/60 transition-colors">
                       {solution.number}
                     </span>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between gap-4 mb-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center justify-between gap-4 mb-2 sm:flex-nowrap">
                         <h3 className="text-lg font-bold text-foreground group-hover:text-neon-green transition-colors">
                           {solution.title}
                         </h3>

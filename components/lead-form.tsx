@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, type FormEvent } from 'react'
+import { useId, useState, type FormEvent } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 
 interface LeadFormProps {
@@ -100,7 +100,7 @@ function HoneypotField({
 }
 
 function SubmitError({ message }: { message: string }) {
-  return <p className="mt-3 text-center text-sm text-red-400 leading-relaxed">{message}</p>
+  return <p role="alert" className="mt-3 text-center text-sm text-red-400 leading-relaxed">{message}</p>
 }
 
 function ConsentCheckbox({
@@ -112,18 +112,19 @@ function ConsentCheckbox({
   onCheckedChange: (value: boolean) => void
   className?: string
 }) {
+  const consentId = useId()
   return (
     <div
       className={`flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-3 ${className}`}
     >
       <Checkbox
-        id="lead-consent-pd"
+        id={consentId}
         checked={checked}
         onCheckedChange={(value) => onCheckedChange(value === true)}
         className="mt-0.5 border-white/20 data-[state=checked]:border-gold data-[state=checked]:bg-gold data-[state=checked]:text-black"
       />
       <label
-        htmlFor="lead-consent-pd"
+        htmlFor={consentId}
         className="cursor-pointer text-sm leading-snug text-white/70"
       >
         Я согласен на обработку{' '}
@@ -139,6 +140,10 @@ function ConsentCheckbox({
 }
 
 export default function LeadForm({ variant = 'default', className = '' }: LeadFormProps) {
+  const formId = useId()
+  const nameId = `${formId}-name`
+  const contactId = `${formId}-contact`
+  const messageId = `${formId}-message`
   const [formData, setFormData] = useState({
     name: '',
     contact: '',
@@ -149,6 +154,7 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [phoneError, setPhoneError] = useState<string | null>(null)
+  const [nameError, setNameError] = useState<string | null>(null)
   const [consentPd, setConsentPd] = useState(false)
   const [consentError, setConsentError] = useState<string | null>(null)
 
@@ -164,6 +170,7 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
 
   const updateField = (field: keyof typeof formData, value: string) => {
     clearSubmitError()
+    if (field === 'name') setNameError(null)
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
@@ -185,7 +192,9 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
   }
 
   const handleSubmit = async () => {
+    if (isSubmitting) return
     clearSubmitError()
+    setNameError(null)
     setPhoneError(null)
     setConsentError(null)
     setIsSubmitting(true)
@@ -201,6 +210,11 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
       const message =
         formData.message.trim() ||
         (variant === 'inline' ? 'Короткая заявка с сайта' : '')
+
+      if (!name) {
+        setNameError('Введите имя')
+        return
+      }
 
       if (!isValidRussianPhone(contact)) {
         setPhoneError(PHONE_ERROR_MESSAGE)
@@ -283,11 +297,14 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
 
   if (variant === 'inline') {
     return (
-      <form onSubmit={onFormSubmit} className={`relative flex flex-col gap-4 ${className}`}>
+      <form onSubmit={onFormSubmit} aria-busy={isSubmitting} className={`relative flex flex-col gap-4 ${className}`}>
         <HoneypotField value={website} onChange={updateWebsite} />
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="flex-1">
             <input
+              id={contactId}
+              aria-label="Телефон"
+              aria-invalid={Boolean(phoneError)}
               type="tel"
               inputMode="tel"
               autoComplete="tel"
@@ -321,11 +338,15 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
     const submitButtonClass = `mt-7 ${GOLD_SUBMIT_BUTTON_CLASS}`
 
     return (
-      <form onSubmit={onFormSubmit} className={`relative flex w-full flex-col gap-4 ${className}`}>
+      <form onSubmit={onFormSubmit} aria-busy={isSubmitting} className={`relative flex w-full flex-col gap-4 ${className}`}>
         <HoneypotField value={website} onChange={updateWebsite} />
         <div>
-          <label className={labelClass}>Имя</label>
+          <label htmlFor={nameId} className={labelClass}>Имя</label>
           <input
+            id={nameId}
+            maxLength={100}
+            aria-label="Имя"
+            aria-invalid={Boolean(nameError)}
             type="text"
             placeholder="Как к вам обращаться"
             value={formData.name}
@@ -333,10 +354,14 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
             required
             className={fieldClass}
           />
+          {nameError ? <SubmitError message={nameError} /> : null}
         </div>
         <div>
-          <label className={labelClass}>Телефон</label>
+          <label htmlFor={contactId} className={labelClass}>Телефон</label>
           <input
+            id={contactId}
+            aria-label="Телефон"
+            aria-invalid={Boolean(phoneError)}
             type="tel"
             inputMode="tel"
             autoComplete="tel"
@@ -349,8 +374,11 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
           {phoneError ? <SubmitError message={phoneError} /> : null}
         </div>
         <div>
-          <label className={labelClass}>О задаче</label>
+          <label htmlFor={messageId} className={labelClass}>О задаче</label>
           <textarea
+            id={messageId}
+            maxLength={2000}
+            aria-label="О задаче"
             placeholder="Коротко: что нужно и к какому сроку"
             value={formData.message}
             onChange={(e) => updateField('message', e.target.value)}
@@ -375,12 +403,16 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
 
   if (variant === 'compact') {
     return (
-      <form onSubmit={onFormSubmit} className={`relative space-y-4 ${className}`}>
+      <form onSubmit={onFormSubmit} aria-busy={isSubmitting} className={`relative space-y-4 ${className}`}>
         <HoneypotField value={website} onChange={updateWebsite} />
         <p className="text-sm text-muted-foreground">
           Расскажите коротко о задаче — ответим в течение дня и подскажем, с чего начать.
         </p>
         <input
+          id={nameId}
+          maxLength={100}
+          aria-label="Имя"
+          aria-invalid={Boolean(nameError)}
           type="text"
           placeholder="Имя"
           value={formData.name}
@@ -388,7 +420,11 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
           required
           className="w-full px-5 py-4 bg-card border border-border text-foreground placeholder:text-muted-foreground focus:border-neon-green focus:outline-none transition-colors"
         />
+          {nameError ? <SubmitError message={nameError} /> : null}
         <input
+          id={contactId}
+          aria-label="Телефон"
+          aria-invalid={Boolean(phoneError)}
           type="tel"
           inputMode="tel"
           autoComplete="tel"
@@ -400,6 +436,9 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
         />
         {phoneError ? <SubmitError message={phoneError} /> : null}
         <textarea
+            id={messageId}
+            maxLength={2000}
+            aria-label="Коротко о задаче"
           placeholder="Коротко о задаче"
           value={formData.message}
           onChange={(e) => updateField('message', e.target.value)}
@@ -423,14 +462,18 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
   }
 
   return (
-    <form onSubmit={onFormSubmit} className={`relative space-y-5 ${className}`}>
+    <form onSubmit={onFormSubmit} aria-busy={isSubmitting} className={`relative space-y-5 ${className}`}>
       <HoneypotField value={website} onChange={updateWebsite} />
       <p className="text-muted-foreground">
         Расскажите коротко о задаче — ответим в течение дня и подскажем, с чего начать.
       </p>
       <div>
-        <label className="block text-sm font-medium text-foreground mb-2">Имя</label>
+        <label htmlFor={nameId} className="block text-sm font-medium text-foreground mb-2">Имя</label>
         <input
+          id={nameId}
+          maxLength={100}
+          aria-label="Имя"
+          aria-invalid={Boolean(nameError)}
           type="text"
           placeholder="Имя"
           value={formData.name}
@@ -438,10 +481,14 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
           required
           className="w-full px-5 py-4 bg-card border border-border text-foreground placeholder:text-muted-foreground focus:border-neon-green focus:outline-none transition-colors"
         />
+          {nameError ? <SubmitError message={nameError} /> : null}
       </div>
       <div>
-        <label className="block text-sm font-medium text-foreground mb-2">Телефон</label>
+        <label htmlFor={contactId} className="block text-sm font-medium text-foreground mb-2">Телефон</label>
         <input
+          id={contactId}
+          aria-label="Телефон"
+          aria-invalid={Boolean(phoneError)}
           type="tel"
           inputMode="tel"
           autoComplete="tel"
@@ -454,8 +501,11 @@ export default function LeadForm({ variant = 'default', className = '' }: LeadFo
         {phoneError ? <SubmitError message={phoneError} /> : null}
       </div>
       <div>
-        <label className="block text-sm font-medium text-foreground mb-2">Коротко о задаче</label>
+        <label htmlFor={messageId} className="block text-sm font-medium text-foreground mb-2">Коротко о задаче</label>
         <textarea
+            id={messageId}
+            maxLength={2000}
+            aria-label="Коротко о задаче"
           placeholder="Коротко о задаче"
           value={formData.message}
           onChange={(e) => updateField('message', e.target.value)}

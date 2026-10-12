@@ -255,23 +255,32 @@ https://golwebstudio.ru
 export async function POST(request: NextRequest) {
   try {
     // 1. Прочитать body
-    const body = await request.json()
+    let body: unknown
+    try {
+      body = await request.json()
+    } catch {
+      return NextResponse.json({ ok: false, error: 'BAD_REQUEST' }, { status: 400 })
+    }
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json({ ok: false, error: 'BAD_REQUEST' }, { status: 400 })
+    }
+    const fields = body as Record<string, unknown>
 
     // 2. Honeypot
-    const website = trimField(body?.website)
+    const website = trimField(fields.website)
     if (website) {
       return NextResponse.json({ ok: true })
     }
 
     // 3. Согласие на обработку ПД
-    if (body?.consent !== true) {
+    if (fields.consent !== true) {
       return NextResponse.json({ ok: false, error: 'CONSENT_REQUIRED' }, { status: 400 })
     }
 
     // 4. Нормализация
-    const name = trimField(body?.name)
-    const contactRaw = trimField(body?.contact)
-    const message = trimField(body?.message)
+    const name = trimField(fields.name)
+    const contactRaw = trimField(fields.contact)
+    const message = trimField(fields.message)
 
     const phoneResult = normalizeAndFormatPhone(contactRaw)
     if (!phoneResult.ok) {
@@ -281,11 +290,11 @@ export async function POST(request: NextRequest) {
     const contact = phoneResult.formatted
 
     // 5. Валидация
-    if (!name || !contact || !message) {
+    if (!name || !contact || (fields.message !== undefined && typeof fields.message !== 'string')) {
       return NextResponse.json({ ok: false, error: 'VALIDATION_ERROR' }, { status: 400 })
     }
 
-    if (name.length > 100 || contact.length > 150 || message.length > 2000) {
+    if (name.length > 100 || contactRaw.length > 150 || message.length > 2000) {
       return NextResponse.json({ ok: false, error: 'VALIDATION_ERROR' }, { status: 400 })
     }
 

@@ -81,7 +81,7 @@ export default function FinalCTA() {
 
               <p className="mx-auto mb-8 max-w-md text-base font-light text-muted-foreground md:text-lg lg:mx-0">
                 Напишите пару слов о задаче —
-                <br className="hidden sm:block" />
+                <br className="hidden sm:block" />{' '}
                 ответим и подскажем, с чего лучше начать.
               </p>
 

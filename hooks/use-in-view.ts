@@ -6,11 +6,14 @@ interface UseInViewOptions {
   once?: boolean
 }
 
-export function useInView(ref: React.RefObject<HTMLElement>, options: UseInViewOptions = {}) {
+export function useInView(ref: React.RefObject<HTMLElement | null>, options: UseInViewOptions = {}) {
   const [isInView, setIsInView] = useState(false)
   const hasBeenInView = useRef(false)
 
   useEffect(() => {
+    const element = ref.current
+    if (!element) return
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -29,14 +32,10 @@ export function useInView(ref: React.RefObject<HTMLElement>, options: UseInViewO
       }
     )
 
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
+    observer.observe(element)
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
+      observer.disconnect()
     }
   }, [ref, options])
 
