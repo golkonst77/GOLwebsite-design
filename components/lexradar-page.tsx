@@ -107,7 +107,7 @@ export default function LexRadarPage() {
           <span className="text-xs tracking-[0.2em] text-gold md:hidden">LEXRADAR</span>
           <div className="flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-1 md:w-auto md:gap-8 lg:gap-12">
             {navigation.map(([label, href]) => (
-              <a key={href} href={href} className={`inline-flex min-h-11 items-center text-xs tracking-[0.05em] text-white/70 transition-colors hover:text-gold md:text-sm ${focus}`}>
+              <a key={href} href={href} className={`${href === '#contact' ? 'hidden md:inline-flex' : 'inline-flex'} min-h-11 items-center text-xs tracking-[0.05em] text-white/70 transition-colors hover:text-gold md:text-sm ${focus}`}>
                 {label}
               </a>
             ))}
