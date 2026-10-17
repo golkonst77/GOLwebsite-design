@@ -1,0 +1,43 @@
+
+> my-project@1.2.1 test:browser
+> playwright test
+
+[WebServer] (node:9693) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:9706) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:9719) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:9732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 19 tests using 1 worker
+
+(node:9751) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/lexradar.spec.ts:28:7 › LexRadar 360x800: layout, anchors, disabled form, accessibility (2.6s)
+  ✓   2 tests/browser/lexradar.spec.ts:28:7 › LexRadar 390x844: layout, anchors, disabled form, accessibility (2.4s)
+  ✓   3 tests/browser/lexradar.spec.ts:28:7 › LexRadar 768x1024: layout, anchors, disabled form, accessibility (2.6s)
+  ✓   4 tests/browser/lexradar.spec.ts:28:7 › LexRadar 1024x768: layout, anchors, disabled form, accessibility (2.7s)
+  ✓   5 tests/browser/lexradar.spec.ts:28:7 › LexRadar 1440x900: layout, anchors, disabled form, accessibility (2.7s)
+  ✓   6 tests/browser/lexradar.spec.ts:28:7 › LexRadar 1920x1080: layout, anchors, disabled form, accessibility (3.0s)
+  ✓   7 tests/browser/lexradar.spec.ts:94:5 › home regression: sections, UTM promo, mobile menu and invisible links (2.4s)
+  ✓   8 tests/browser/lexradar.spec.ts:131:5 › metadata, PNG and legal pages are served by production build (1.1s)
+  ✓   9 tests/browser/lexradar.spec.ts:170:5 › keyboard skip, consent settings, no analytics without consent, 200% text zoom (1.3s)
+  ✓  10 tests/browser/lexradar.spec.ts:212:5 › enabled form native validation and successful mock submission with UTM, optional phone empty (2.9s)
+  ✓  11 tests/browser/lexradar.spec.ts:256:7 › form 400 VALIDATION: honest error, preserves data (2.4s)
+  ✓  12 tests/browser/lexradar.spec.ts:256:7 › form 429 RATE_LIMIT: honest error, preserves data (2.4s)
+  ✓  13 tests/browser/lexradar.spec.ts:256:7 › form 502 SEND_FAILED: honest error, preserves data (2.4s)
+  ✓  14 tests/browser/lexradar.spec.ts:256:7 › form 504 DELIVERY_UNCONFIRMED: honest error, preserves data (2.3s)
+  ✓  15 tests/browser/lexradar.spec.ts:278:5 › network failure cannot expose raw errors or claim success (2.4s)
+  ✓  16 tests/browser/lexradar.spec.ts:295:7 › malformed API response: invalid JSON (2.5s)
+  ✓  17 tests/browser/lexradar.spec.ts:295:7 › malformed API response: missing acceptance code (2.6s)
+  ✓  18 tests/browser/lexradar.spec.ts:322:5 › blocked localStorage still lets visitor close cookie banner (810ms)
+  ✓  19 tests/browser/lexradar.spec.ts:340:5 › mobile drawer releases scrolling after desktop resize (1.9s)
+
+  19 passed (46.5s)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

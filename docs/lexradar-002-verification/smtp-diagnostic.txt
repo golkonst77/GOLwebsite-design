@@ -1,0 +1,15 @@
+
+> my-project@1.2.1 smtp:diagnose
+> node --import tsx scripts/diagnose-smtp.ts --verify
+
+{
+  "senderConfigured": false,
+  "passwordConfigured": false,
+  "recipientConfiguredOrDefault": true,
+  "publicOriginConfigured": false,
+  "abuseModeConfigured": false,
+  "lexradarReady": false,
+  "formEnabled": false,
+  "sendsEmail": false
+}
+SMTP verification skipped: configuration missing.

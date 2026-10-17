@@ -1,6 +1,9 @@
+import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getLexradarConfig } from "@/lib/lexradar-config";
 import LexradarForm from "@/components/lexradar-form";
+import { ConsentSettingsButton } from "@/components/consent/consent-settings-button";
 import "./lexradar.css";
 
 // Read the verified form switch at runtime, without caching SMTP readiness.
@@ -13,6 +16,12 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: "https://www.golwebstudio.ru/lexradar" },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["https://www.golwebstudio.ru/lexradar/og.png"],
+  },
   openGraph: {
     title,
     description,
@@ -22,7 +31,7 @@ export const metadata: Metadata = {
     siteName: "GØL Web Studio",
     images: [
       {
-        url: "https://www.golwebstudio.ru/lexradar/og.svg",
+        url: "https://www.golwebstudio.ru/lexradar/og.png",
         width: 1200,
         height: 630,
         alt: "LexRadar — юридический аудит сайтов",
@@ -87,11 +96,13 @@ const documents = [
 ];
 
 export default function LexradarPage() {
-  const enabled =
-    process.env.LEXRADAR_FORM_ENABLED === "true" &&
-    Boolean(process.env.YANDEX_EMAIL && process.env.YANDEX_PASSWORD);
+  const config = getLexradarConfig();
+  const enabled = config.enabled && config.ready;
   return (
     <div className="lexradar">
+      <a href="#main-content" className="lr-skip">
+        Перейти к содержимому
+      </a>
       <header className="lr-header">
         <nav className="lr-wrap lr-nav" aria-label="Навигация LexRadar">
           <Link href="/" className="lr-logo" aria-label="GØL — на главную">
@@ -99,11 +110,16 @@ export default function LexradarPage() {
           </Link>
           <a href="#risks">Юридические риски</a>
           <a href="#check" className="lr-nav-cta">
-            Проверить сайт ↗
+            Проверить сайт{" "}
+            <ArrowUpRight
+              aria-hidden="true"
+              size={16}
+              className="inline-block shrink-0"
+            />
           </a>
         </nav>
       </header>
-      <main id="main-content">
+      <main id="main-content" tabIndex={-1}>
         <section className="lr-wrap lr-hero" aria-labelledby="hero-title">
           <div>
             <p className="lr-label">LEXRADAR — ЮРИДИЧЕСКИЙ АУДИТ САЙТОВ</p>
@@ -117,12 +133,16 @@ export default function LexradarPage() {
               обязательных документах могут обойтись бизнесу дорого.
             </p>
             <p className="lr-muted">
-              Проверьте свой сайт до возникновения претензий контролирующих
-              органов.
+              Проверьте документы до запуска рекламы и сбора новых заявок.
             </p>
             <div className="lr-actions">
               <a className="lr-button" href="#check">
-                Бесплатно проверить сайт ↗
+                Бесплатно проверить сайт{" "}
+                <ArrowUpRight
+                  aria-hidden="true"
+                  size={16}
+                  className="inline-block shrink-0"
+                />
               </a>
               <a className="lr-secondary" href="#risks">
                 Узнать о юридических рисках ↓
@@ -211,7 +231,12 @@ export default function LexradarPage() {
                 части сайта и выявить признаки возможных юридических нарушений.
               </p>
               <a className="lr-secondary" href="#check">
-                Начать с предварительной проверки ↗
+                Начать с предварительной проверки{" "}
+                <ArrowUpRight
+                  aria-hidden="true"
+                  size={16}
+                  className="inline-block shrink-0"
+                />
               </a>
             </div>
             <div>
@@ -281,7 +306,12 @@ export default function LexradarPage() {
               потребовать профессионального юридического решения.
             </p>
             <a href="#check" className="lr-secondary">
-              Предложить клиенту проверку ↗
+              Предложить клиенту проверку{" "}
+              <ArrowUpRight
+                aria-hidden="true"
+                size={16}
+                className="inline-block shrink-0"
+              />
             </a>
           </div>
         </section>
@@ -318,6 +348,7 @@ export default function LexradarPage() {
           G<span>Ø</span>L
         </Link>
         <p>LexRadar · ИП Голубев</p>
+        <ConsentSettingsButton />
         <Link href="/privacy">Политика обработки данных</Link>
         <a href="mailto:golwebstudio@mail.ru">golwebstudio@mail.ru</a>
       </footer>

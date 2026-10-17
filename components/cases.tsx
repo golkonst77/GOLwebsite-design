@@ -46,7 +46,7 @@ const cases = [
 ]
 
 export default function Cases() {
-  const ref = useRef(null)
+  const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true })
 
   return (

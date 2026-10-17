@@ -434,3 +434,10 @@
     transition: none !important;
   }
 }
+
+.lr-skip { position: absolute; top: 8px; left: 24px; z-index: 10000; padding: 12px 18px; border-radius: 12px; background: #d8b63f; color: #050510; transform: translateY(-180%); }
+.lr-skip:focus { transform: none; }
+.lr-form fieldset:disabled { opacity: .7; }
+
+.lr-nav-cta { display: inline-flex; align-items: center; gap: 6px; }
+.lr-button, .lr-secondary { gap: 8px; }

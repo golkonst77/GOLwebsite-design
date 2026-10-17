@@ -43,7 +43,7 @@ const problems = [
 ]
 
 export default function Problem() {
-  const ref = useRef(null)
+  const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true })
 
   return (

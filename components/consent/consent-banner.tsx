@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useConsent } from './consent-provider'
 
-export function ConsentBanner() {
+export function ConsentBanner({ inline = false }: { inline?: boolean }) {
   const {
     showBanner,
     showSettings,
@@ -21,7 +21,7 @@ export function ConsentBanner() {
   return (
     <>
       <div
-        className="fixed inset-x-0 bottom-0 z-[9999] px-4 pb-4 pt-2 pointer-events-none"
+        className={inline ? "relative z-10" : "fixed inset-x-0 bottom-0 z-[9999] px-4 pb-4 pt-2 pointer-events-none"}
         role="dialog"
         aria-label="Настройки cookies"
       >

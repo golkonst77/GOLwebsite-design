@@ -37,7 +37,7 @@ const steps = [
 ]
 
 export default function Process() {
-  const ref = useRef(null)
+  const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true })
 
   return (
