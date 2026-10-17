@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import LexradarLink from './lexradar-link'
 import { useState } from 'react'
 
 interface HeaderProps {
@@ -50,6 +51,7 @@ export default function Header({ isScrolled }: HeaderProps) {
             >
               Отзывы
             </Link>
+            <LexradarLink className="text-sm tracking-[0.1em] text-gold">LexRadar</LexradarLink>
           </div>
 
           {/* CTA */}
@@ -113,6 +115,7 @@ export default function Header({ isScrolled }: HeaderProps) {
           >
             Отзывы
           </Link>
+          <LexradarLink className="text-3xl font-light text-gold" onClick={() => setIsMenuOpen(false)}>LexRadar</LexradarLink>
           <Link 
             href="#contact" 
             className="text-3xl font-light text-gold"

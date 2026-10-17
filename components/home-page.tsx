@@ -10,6 +10,7 @@ import Process from '@/components/process'
 import Cases from '@/components/cases'
 import Testimonials from '@/components/testimonials'
 import Trust from '@/components/trust'
+import LexradarPromo from '@/components/lexradar-promo'
 import FinalCTA from '@/components/final-cta'
 
 export default function HomePage() {
@@ -34,6 +35,7 @@ export default function HomePage() {
       <Cases />
       <Testimonials />
       <Trust />
+      <LexradarPromo />
       <FinalCTA />
     </main>
   )
