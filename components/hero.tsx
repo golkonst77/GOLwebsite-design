@@ -97,7 +97,6 @@ export default function Hero() {
     // Client-only randomization to avoid hydration mismatch.
     setSelectedCards(pick3())
 
-    let intervalId: number | undefined
     const timeouts = new Set<number>()
 
     const schedule = (fn: () => void, ms: number) => {
@@ -149,7 +148,7 @@ export default function Hero() {
       }, 860)
     }
 
-    intervalId = window.setInterval(() => {
+    const intervalId = window.setInterval(() => {
       const next = pick3(selectedKeyRef.current)
       // staggered wave: left(back-1 idx=1) -> center(main idx=0) -> right(back-2 idx=2)
       ;(Array.from(timeouts) as number[]).forEach((id) => window.clearTimeout(id))

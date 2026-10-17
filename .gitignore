@@ -14,3 +14,8 @@ next.user-config.*
 node_modules
 .next/
 .DS_Store
+# Local verification artifacts
+*.tsbuildinfo
+/test-results/
+/playwright-report/
+/work/
