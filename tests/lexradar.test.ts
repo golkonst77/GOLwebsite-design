@@ -73,6 +73,7 @@ test("valid request: real handler sends one escaped email and returns explicit a
   assert.deepEqual(await response.json(), { ok: true, code: "ACCEPTED" });
   assert.equal(response.headers.get("cache-control"), "no-store");
   assert.equal(mails.length, 1);
+  assert.match(mails[0].text || "", /Идентификатор заявки: [a-f0-9-]{36}/);
   assert.equal(mails[0].replyTo, "test@example.invalid");
   assert.ok(mails[0].text?.includes("partner"));
   assert.ok(!mails[0].text?.includes("discarded"));

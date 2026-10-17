@@ -24,7 +24,12 @@ export default function LexradarPromo() {
           </p>
         </div>
         <LexradarLink className="mt-7 inline-flex min-h-14 shrink-0 items-center justify-center rounded-full bg-gold px-7 text-sm font-semibold text-black transition-colors hover:bg-[#e4c55e] md:mt-0">
-          Бесплатный аудит сайта <ArrowUpRight aria-hidden="true" size={16} className="inline-block shrink-0" />
+          Бесплатный аудит сайта{" "}
+          <ArrowUpRight
+            aria-hidden="true"
+            size={16}
+            className="inline-block shrink-0"
+          />
         </LexradarLink>
       </div>
     </section>

@@ -133,6 +133,7 @@ export function createLexradarHandler({
       const { site, name, email, phone, comment, utm } = data;
       const text = [
         "LexRadar — бесплатная предварительная проверка",
+        `Идентификатор заявки: ${requestId}`,
         `Сайт: ${site}`,
         `Имя: ${name}`,
         `Email: ${email}`,
