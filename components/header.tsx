@@ -79,7 +79,9 @@ export default function Header({ isScrolled }: HeaderProps) {
           <button 
             className="md:hidden flex flex-col gap-1.5 p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
+            aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-navigation"
           >
             <span className={`w-6 h-px bg-foreground transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1' : ''}`} />
             <span className={`w-6 h-px bg-foreground transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-0.5' : ''}`} />
@@ -88,7 +90,10 @@ export default function Header({ isScrolled }: HeaderProps) {
       </header>
 
       {/* Mobile menu */}
-      <div 
+      <div
+        id="mobile-navigation"
+        inert={!isMenuOpen}
+        onKeyDown={(event) => { if (event.key === "Escape") setIsMenuOpen(false) }}
         className={`fixed inset-0 z-40 bg-background transition-all duration-500 md:hidden ${
           isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
