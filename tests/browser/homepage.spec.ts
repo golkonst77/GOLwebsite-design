@@ -10,7 +10,7 @@ const sizes = [
   [1440, 900],
   [1920, 1080],
 ];
-mkdirSync("docs/lexradar-004-screenshots", { recursive: true });
+mkdirSync("docs/lexradar-005-screenshots", { recursive: true });
 for (const [width, height] of sizes)
   test(`homepage two directions ${width}x${height}`, async ({ page }) => {
     await page.setViewportSize({ width, height });
@@ -19,10 +19,17 @@ for (const [width, height] of sizes)
     });
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
-    await page.goto("/?utm_source=partner&utm_campaign=hero004");
-    await page
-      .getByRole("button", { name: "Только необходимые", exact: true })
-      .click();
+    await page.goto("/?utm_source=partner&utm_campaign=hero005");
+    await expect(page.getByRole("dialog", { name: "Настройки cookies" })).toBeVisible();
+    await page.screenshot({path: `docs/lexradar-005-screenshots/cookies-${width}.png`, animations: "disabled"});
+    const banner = await page.getByRole("dialog", { name: "Настройки cookies" }).boundingBox();
+    const legalBefore = await page.locator(".hero-legal").boundingBox();
+    expect(banner!.y).toBeGreaterThanOrEqual(legalBefore!.y + legalBefore!.height);
+    await page.getByRole("button", { name: "Настройки", exact: true }).click();
+    await expect(page.getByRole("dialog", {name: "Настройки cookies"}).getByRole("checkbox")).not.toBeChecked();
+    await page.getByRole("button", { name: "Только необходимые", exact: true }).click();
+    await expect(page.getByRole("dialog", { name: "Настройки cookies" })).toHaveCount(0);
+    await page.evaluate(() => window.scrollTo({top: 0, behavior: "instant"}));
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
       "Сайты для малого бизнеса, которые приводят заявки",
     );
@@ -30,17 +37,17 @@ for (const [width, height] of sizes)
       "услуг",
     );
     await expect(page.locator(".hero-legal")).toContainText(
-      "Бесплатная предварительная проверка LexRadar",
+      "ВАШ САЙТ МОЖЕТ ПРИВЕСТИ К ШТРАФУ",
     );
     await expect(page.locator(".hero-legal")).toContainText(
       "Юридическая проверка · РФ",
     );
     await expect(page.locator(".hero-legal-cta")).toHaveAttribute(
       "href",
-      "/lexradar?utm_source=partner&utm_campaign=hero004",
+      "/lexradar?utm_source=partner&utm_campaign=hero005",
     );
     await page.screenshot({
-      path: `docs/lexradar-004-screenshots/after-${width}.png`,
+      path: `docs/lexradar-005-screenshots/after-${width}.png`,
       animations: "disabled",
     });
     expect(
@@ -80,8 +87,9 @@ for (const [width, height] of sizes)
     expect(layout.heading.top).toBeGreaterThanOrEqual(80);
     expect(layout.heading.left).toBeGreaterThanOrEqual(20);
     expect(layout.heading.right).toBeLessThanOrEqual(width - 20);
-    // Both business directions are in the first viewport; portfolio moves below them on mobile.
-    expect(layout.cta.bottom).toBeLessThanOrEqual(height);
+    // Desktop keeps both offers in view; mobile presents the legal card before portfolio.
+    if (width >= 1024) expect(layout.cta.bottom).toBeLessThanOrEqual(height);
+    else expect(layout.legal.top).toBeLessThan(height);
     for (const link of await page
       .locator(".hero-actions a, .hero-legal-cta, header nav a")
       .all()) {
@@ -93,8 +101,8 @@ for (const [width, height] of sizes)
     }
     if (width >= 1024) {
       for (const card of layout.cards) {
-        expect(card.left).toBeGreaterThan(layout.copy.right);
-        expect(card.bottom).toBeLessThan(layout.legal.top);
+        expect(card.right).toBeLessThan(layout.legal.left);
+        expect(card.top).toBeGreaterThan(layout.copy.bottom);
       }
       await page.locator(".hero-visual").hover();
       await page.waitForTimeout(900); // Verify the completed fan animation, not its initial state.
@@ -109,7 +117,7 @@ for (const [width, height] of sizes)
           document.querySelectorAll(".hero-cards-stage > div"),
         ).some((el) => {
           const card = el.getBoundingClientRect();
-          return card.left < copy.right || card.bottom > legal.top;
+          return card.right > legal.left || card.top < copy.bottom;
         });
       });
       expect(overlaps).toBe(false);
@@ -156,7 +164,7 @@ for (const [width, height] of sizes)
       .toBe(true);
     await page.locator(".hero-legal-cta").click();
     await expect(page).toHaveURL(
-      /\/lexradar\?utm_source=partner&utm_campaign=hero004/,
+      /\/lexradar\?utm_source=partner&utm_campaign=hero005/,
     );
     await expect(page.getByRole("heading", { level: 1 })).toContainText(
       "Ваш сайт может работать идеально",

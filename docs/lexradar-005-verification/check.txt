@@ -1,0 +1,133 @@
+
+> my-project@1.2.1 check
+> npm run typecheck && npm run lint && npm test && npm run build
+
+
+> my-project@1.2.1 typecheck
+> next typegen && tsc --noEmit --incremental false
+
+Generating route types...
+✓ Types generated successfully
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+
+> my-project@1.2.1 lint
+> eslint .
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+
+> my-project@1.2.1 test
+> node --import tsx --test tests/*.test.ts
+
+✔ cookie choice: persistence failure does not break interaction; invalid storage is ignored (1.504951ms)
+✔ valid request: real handler sends one escaped email and returns explicit acceptance (9.442378ms)
+✔ missing required site returns 400 without sending (1.491651ms)
+✔ missing required name returns 400 without sending (0.894855ms)
+✔ missing required email returns 400 without sending (0.794974ms)
+✔ missing required consent returns 400 without sending (1.153884ms)
+✔ missing required consentVersion returns 400 without sending (0.648194ms)
+✔ missing required requestId returns 400 without sending (0.479681ms)
+✔ invalid bad URL: 400 and no mail (0.787102ms)
+✔ invalid javascript: 400 and no mail (0.610978ms)
+✔ invalid data URL: 400 and no mail (0.917598ms)
+✔ invalid FTP: 400 and no mail (0.495525ms)
+✔ invalid credentials: 400 and no mail (0.395324ms)
+✔ invalid blank name: 400 and no mail (0.384818ms)
+✔ invalid header injection: 400 and no mail (0.386531ms)
+✔ invalid consent false: 400 and no mail (0.457487ms)
+✔ invalid consent string: 400 and no mail (0.492049ms)
+✔ invalid stale consent: 400 and no mail (0.357206ms)
+✔ invalid phone symbols: 400 and no mail (0.587713ms)
+✔ invalid phone misplaced plus: 400 and no mail (0.381834ms)
+✔ invalid short phone: 400 and no mail (0.377257ms)
+✔ invalid long comment: 400 and no mail (0.578079ms)
+✔ invalid bad UTM: 400 and no mail (0.413001ms)
+✔ invalid honeypot: 400 and no mail (0.33288ms)
+✔ non-object body null (0.380481ms)
+✔ non-object body [] (0.236535ms)
+✔ non-object body "string" (0.279009ms)
+✔ non-object body 3 (0.323186ms)
+✔ optional data {} (0.437938ms)
+✔ optional data {"phone":"","comment":""} (0.394392ms)
+✔ optional data {"phone":"+7 (999) 123-45-67","comment":"Комментарий\nв две строки"} (0.468764ms)
+✔ canonical Origin works behind internal proxy; forged host cannot authorize another origin (1.290438ms)
+✔ JSON media type must be exact, supports charset (0.790919ms)
+✔ invalid JSON and deceptive content length return safe errors (0.950779ms)
+✔ chunked request is bounded by actual bytes, even with small claimed size (0.772461ms)
+✔ slow body is cancelled on timeout (17.248466ms)
+✔ forged XFF cannot rotate shared limiter; expires after ten minutes (3.085396ms)
+✔ trusted header must contain a single valid address; untrusted XFF ignored (5.376087ms)
+✔ concurrent and later retries with same UUID send once; changed body conflicts (7.650284ms)
+✔ SMTP rejected cannot report success or leak details (1.130358ms)
+✔ SMTP timeout cannot report success or leak details (0.829407ms)
+✔ unexpected thrown transport error returns uncertain safe result (0.681343ms)
+✔ disabled or unconfigured never calls transport (0.501844ms)
+✔ configuration fails closed without explicit origin and deployment mode (0.616787ms)
+✔ UTM selection is consistent, bounded, and drops unrelated parameters (0.429855ms)
+✔ email service: accepted (0.656917ms)
+✔ email service: rejected (0.142905ms)
+✔ email service: missing receipt (0.089625ms)
+✔ email service bounds a stalled SMTP session and closes transport (6.380141ms)
+✔ email service sanitizes auth failure, closes, rejects missing credentials/injected headers (0.387262ms)
+ℹ tests 50
+ℹ suites 0
+ℹ pass 50
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 404.505414
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+
+> my-project@1.2.1 build
+> next build
+
+▲ Next.js 16.4.2 (Turbopack)
+✓ Running next.config.mjs took 10ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 764ms
+  Running TypeScript ...
+  Finished TypeScript in 2.4s ...
+  Collecting page data using 2 workers ...
+  Generating static pages using 2 workers (0/7) ...
+  Generating static pages using 2 workers (1/7)
+  Generating static pages using 2 workers (3/7)
+  Generating static pages using 2 workers (5/7)
+✓ Generating static pages using 2 workers (7/7) in 205ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/lead
+├ ƒ /api/lexradar
+├ ƒ /lexradar
+├ ○ /lexradar/consent
+└ ○ /privacy
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

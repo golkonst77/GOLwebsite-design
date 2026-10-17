@@ -265,3 +265,98 @@
     transition: none !important;
   }
 }
+
+/* LexRadar is a full campaign card; consent follows it in normal flow. */
+.gol-hero .hero-grid { grid-template-areas: "copy" "legal" "cookies" "visual"; }
+.gol-hero .hero-legal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 26px 22px;
+  border: 1px solid #faac57;
+  border-radius: 24px;
+  background: linear-gradient(145deg, #ffbb70, #f48b50);
+  color: #24150f;
+  box-shadow: 0 24px 90px #ef87421f;
+}
+.gol-hero .hero-legal-symbol {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  font-size: 30px;
+  font-weight: 700;
+}
+.gol-hero .hero-legal-label { color: #4b291b; font-weight: 600; }
+.gol-hero .hero-legal h2 {
+  color: #24150f;
+  font-size: clamp(30px, 7.6vw, 44px);
+  line-height: 1.04;
+  font-weight: 800;
+  letter-spacing: -.035em;
+  text-wrap: initial;
+  margin-bottom: 18px;
+}
+.gol-hero .hero-legal h2 span { color: #24150f; }
+.gol-hero .hero-legal-description { color: #442719; font-size: 15px; line-height: 1.5; }
+.gol-hero .hero-legal-cta {
+  width: 100%;
+  margin-top: auto;
+  min-height: 58px;
+  padding: 16px 12px;
+  background: #24150f;
+  color: #fff3e6;
+  border: 1px solid #24150f;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  border-radius: 12px;
+}
+.gol-hero .hero-legal-cta:hover { background: #442719; border-color: #442719; }
+.gol-hero .hero-legal-cta:focus-visible { outline-color: #24150f; }
+.gol-hero .hero-legal-footnote { color: #442719; font-size: 11px; line-height: 1.5; }
+.gol-hero .hero-cookies { grid-area: cookies; min-width: 0; }
+.gol-hero .hero-cookies:empty { display: none; }
+@media (min-width: 640px) {
+  .gol-hero .hero-legal { padding: 32px; }
+  .gol-hero .hero-legal h2 { font-size: 44px; }
+  .gol-hero .hero-legal-cta { font-size: 14px; }
+}
+@media (min-width: 1024px) {
+  .gol-hero .hero-grid {
+    grid-template-areas: "copy legal" "visual legal" "cookies cookies";
+    grid-template-columns: 1.05fr .95fr;
+    gap: 24px 56px;
+    align-items: stretch;
+  }
+  .gol-hero .hero-heading { font-size: clamp(40px, 3.6vw, 52px); }
+  .gol-hero .hero-description { margin-bottom: 18px; font-size: 15px; }
+  .gol-hero .hero-eyebrow { margin-bottom: 12px; }
+  .gol-hero .hero-legal { padding: 32px; gap: 20px; }
+  .gol-hero .hero-legal h2 { font-size: clamp(36px, 3.4vw, 49px); }
+  .gol-hero .hero-cards-stage { height: 200px; }
+  .gol-hero .hero-cards-stage > div { height: 140px; width: 68%; left: 12%; right: auto; top: 40px; bottom: auto; }
+  .gol-hero .hero-layout { padding-top: 112px; padding-bottom: 32px; }
+}
+@media (min-width: 1280px) {
+  .gol-hero .hero-cards-stage { height: 220px; }
+  .gol-hero .hero-cards-stage > div { height: 160px; }
+  .gol-hero .hero-legal { padding: 36px; }
+}
+@media (max-width: 639px) {
+  .gol-hero .hero-layout { padding-top: 100px; }
+  .gol-hero .hero-grid { gap: 24px; }
+  .gol-hero .hero-heading { font-size: 32px; margin-bottom: 16px; }
+  .gol-hero .hero-description { font-size: 13px; line-height: 1.55; margin-bottom: 18px; }
+  .gol-hero .hero-eyebrow { margin-bottom: 14px; }
+  .gol-hero .hero-legal { padding: 22px; gap: 14px; }
+  .gol-hero .hero-legal-symbol { position: absolute; right: 18px; top: 18px; width: 28px; height: 28px; font-size: 20px; }
+  .gol-hero .hero-legal-label { max-width: 190px; font-size: 9px; margin-bottom: 16px; }
+  .gol-hero .hero-legal h2 { font-size: 30px; margin-bottom: 12px; }
+  .gol-hero .hero-legal-description { font-size: 13px; }
+  .gol-hero .hero-legal-cta { font-size: 11px; min-height: 54px; gap: 6px; }
+}

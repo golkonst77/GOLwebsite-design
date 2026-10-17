@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, type MouseEvent as ReactMouseEvent } from 
 import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
 import LexradarLink from './lexradar-link'
+import { ConsentBanner } from './consent/consent-banner'
 import './hero.css'
 
 export default function Hero() {
@@ -302,24 +303,24 @@ export default function Hero() {
             aria-labelledby="hero-legal-heading"
             style={{ animationDelay: "0.4s" }}
           >
+            <div className="hero-legal-symbol" aria-hidden="true">!</div>
             <div className="hero-legal-copy">
               <p className="hero-legal-label">02 / Юридическая проверка · РФ</p>
               <h2 id="hero-legal-heading">
-                Сайт может работать — и <span>нарушать закон</span>
+                ВАШ САЙТ МОЖЕТ <span>ПРИВЕСТИ К ШТРАФУ</span>
               </h2>
               <p className="hero-legal-description">
-                Проверьте персональные данные, согласия и обязательные
-                документы.{" "}
-                <span className="hero-legal-offer">
-                  Бесплатная предварительная проверка LexRadar.
-                </span>
+                Ошибки в персональных данных, согласиях и обязательных документах
+                могут дорого обойтись бизнесу.
               </p>
             </div>
             <LexradarLink className="hero-legal-cta">
-              Проверить сайт бесплатно{" "}
-              <ArrowUpRight aria-hidden="true" size={17} />
+              ПРОВЕРИТЬ САЙТ БЕСПЛАТНО{" "}
+              <ArrowUpRight aria-hidden="true" size={21} />
             </LexradarLink>
+            <p className="hero-legal-footnote">LexRadar — предварительная юридическая проверка сайтов</p>
           </section>
+          <div className="hero-cookies"><ConsentBanner inline /></div>
 
           {/* Right: premium preview-card (lighter, high-contrast) */}
           <div
