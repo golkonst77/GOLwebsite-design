@@ -1,5 +1,4 @@
-import { z } from "zod";
-import { getSmtpConfig } from "./smtp-config";
+import { getSmtpConfig, getLeadRecipient } from "./smtp-config";
 
 export type LexradarConfig = {
   enabled: boolean;
@@ -41,9 +40,7 @@ export function getLexradarConfig(
       ? env.LEXRADAR_CLIENT_IP_HEADER
       : null;
   const smtpReady =
-    Boolean(getSmtpConfig(env)) &&
-    (!env.LEAD_TO_EMAIL ||
-      z.string().email().safeParse(env.LEAD_TO_EMAIL.trim()).success);
+    Boolean(getSmtpConfig(env) && getLeadRecipient(env));
   const ready = Boolean(
     origin &&
     smtpReady &&

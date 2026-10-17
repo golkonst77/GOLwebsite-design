@@ -132,7 +132,7 @@ LexRadar использует отдельный `/api/lexradar`, форму `co
 
 ## SMTP из окружения
 
-Основной режим задаётся через SMTP_HOST / SMTP_PORT / SMTP_SECURE / SMTP_USER / SMTP_PASSWORD / SMTP_FROM. См. [ENVIRONMENT.md](./ENVIRONMENT.md). Все формы используют один сервис; успех требует принятия нужного получателя SMTP-сервером.
+Основной режим задаётся через SMTP_HOST / SMTP_PORT / SMTP_SECURE / SMTP_USER / SMTP_PASS / SMTP_FROM. См. [ENVIRONMENT.md](./ENVIRONMENT.md). Все формы используют один сервис; успех требует принятия нужного получателя SMTP-сервером.
 
 ### Сохранённый старый режим Yandex (только без всех SMTP_*)
 
@@ -174,10 +174,10 @@ nc -6 -vz 2a02:6b8::19d 587
 ```sh
 npm run smtp:diagnose
 npm run smtp:diagnose -- --verify
-npm run smtp:diagnose -- --send-test
+npm run smtp:diagnose -- --production-test
 ```
 
-Первая команда не открывает соединения; verify проверяет TLS/аутентификацию без письма; send-test отправляет одно синтетическое письмо на LEAD_TO_EMAIL (по умолчанию golwebstudio@mail.ru). До включения формы подтвердить получение письма в ящике по Test ID. Ни одна команда не меняет LEXRADAR_FORM_ENABLED.
+Первая команда не открывает соединения; verify проверяет TLS/аутентификацию без письма; production-test после проверки TLS и авторизации отправляет одно синтетическое письмо строго на golwebstudio@mail.ru через Яндекс. SMTP_PASSWORD и LEAD_TO_EMAIL поддерживаются как прежние имена SMTP_PASS и MAIL_TO. Подробности EAUTH и включения: [инструкция](./lexradar-yandex-production.md). До включения формы подтвердить получение письма в ящике по Test ID. Ни одна команда не меняет LEXRADAR_FORM_ENABLED.
 
 ### Логи
 

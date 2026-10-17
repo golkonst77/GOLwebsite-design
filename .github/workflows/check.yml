@@ -17,4 +17,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
       # CI never receives SMTP credentials and never enables or submits the form.

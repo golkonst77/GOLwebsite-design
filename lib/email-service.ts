@@ -1,6 +1,7 @@
 import nodemailer, { type SendMailOptions } from "nodemailer";
 import { getSmtpConfig } from "./smtp-config";
 import { z } from "zod";
+import { safeSmtpError } from "./smtp-errors";
 
 export type EmailInput = {
   to: string;
@@ -19,6 +20,8 @@ export type EmailResult = {
   messageId?: string;
   error?: string;
   uncertain?: boolean;
+  smtpCode?: string;
+  responseCode?: number;
 };
 type Receipt = {
   accepted?: readonly unknown[];
@@ -100,6 +103,7 @@ export function createEmailSender({
         success: false,
         error: "SMTP_SEND_FAILED",
         uncertain: !definitive,
+        ...safeSmtpError(cause),
       };
     } finally {
       clearTimeout(timer);

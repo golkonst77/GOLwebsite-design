@@ -492,6 +492,7 @@ test("email service sanitizes auth failure, closes, rejects missing credentials/
     success: false,
     error: "SMTP_SEND_FAILED",
     uncertain: false,
+    smtpCode: "EAUTH",
   });
   assert.equal(
     (

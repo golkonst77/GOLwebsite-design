@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email-service'
+import { getLeadRecipient } from '@/lib/smtp-config'
 
-const DEFAULT_LEAD_TO = 'golwebstudio@mail.ru'
 const EMPTY_MESSAGE_FALLBACK = 'Клиент не оставил описание задачи'
 const RATE_LIMIT_MAX = 3
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000
@@ -298,7 +298,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const to = process.env.LEAD_TO_EMAIL?.trim() || DEFAULT_LEAD_TO
+    const to = getLeadRecipient()
+    if (!to) return NextResponse.json({ ok: false, error: 'SEND_FAILED' }, { status: 503 })
     const sentAt = new Date().toLocaleString('ru-RU', {
       timeZone: 'Europe/Moscow',
       dateStyle: 'long',

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { getSmtpConfig } from "../lib/smtp-config";
+import { getSmtpConfig, getLeadRecipient } from "../lib/smtp-config";
 import { getLexradarConfig } from "../lib/lexradar-config";
 import { createEmailSender } from "../lib/email-service";
 
@@ -11,6 +11,24 @@ const env = {
   SMTP_USER: "sender@example.invalid",
   SMTP_PASSWORD: "unit-test-only",
 };
+
+test("production SMTP_PASS and MAIL_TO aliases work without renaming secrets", () => {
+  const production = {
+    SMTP_HOST: "smtp.yandex.ru", SMTP_PORT: "465", SMTP_USER: "golkonst@yandex.ru",
+    SMTP_PASS: "test-only", SMTP_FROM: "golkonst@yandex.ru", MAIL_TO: "golwebstudio@mail.ru",
+  };
+  const config = getSmtpConfig(production)!;
+  assert.equal(config.options.secure, true);
+  assert.equal(config.options.auth.pass, "test-only");
+  assert.equal(getLeadRecipient(production), "golwebstudio@mail.ru");
+  assert.equal(getSmtpConfig({ ...production, SMTP_PASSWORD: "different" }), null);
+  assert.equal(getSmtpConfig({ ...production, SMTP_PASSWORD: "" }), null);
+  assert.ok(getSmtpConfig({ ...production, SMTP_PASSWORD: "test-only" }));
+  assert.equal(getLeadRecipient({ ...production, LEAD_TO_EMAIL: "other@example.invalid" }), null);
+  assert.equal(getLeadRecipient({ MAIL_TO: "" }), null);
+  assert.equal(getLeadRecipient({ MAIL_TO: "bad" }), null);
+  assert.equal(getLeadRecipient({}), "golwebstudio@mail.ru");
+});
 
 test("implicit TLS and STARTTLS use configured host with certificate verification", () => {
   const implicit = getSmtpConfig(env)!;
