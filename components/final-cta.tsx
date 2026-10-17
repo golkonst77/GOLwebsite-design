@@ -5,7 +5,7 @@ import { useInView } from '@/hooks/use-in-view'
 import LeadForm from './lead-form'
 
 const TELEGRAM_URL = 'https://t.me/teodor77'
-const EMAIL = 'golwebstudio@mail.ru'
+const EMAIL = 'golwebstudio@bk.ru'
 
 function TelegramIcon({ className }: { className?: string }) {
   return (

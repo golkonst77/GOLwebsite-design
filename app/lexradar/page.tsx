@@ -350,7 +350,7 @@ export default function LexradarPage() {
         <p>LexRadar · ИП Голубев</p>
         <ConsentSettingsButton />
         <Link href="/privacy">Политика обработки данных</Link>
-        <a href="mailto:golwebstudio@mail.ru">golwebstudio@mail.ru</a>
+        <a href="mailto:golwebstudio@bk.ru">golwebstudio@bk.ru</a>
       </footer>
     </div>
   );

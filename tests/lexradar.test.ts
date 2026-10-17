@@ -359,8 +359,8 @@ test("disabled or unconfigured never calls transport", async () => {
 test("configuration fails closed without explicit origin and deployment mode", () => {
   const base = {
     LEXRADAR_FORM_ENABLED: "true",
-    YANDEX_EMAIL: "test@example.invalid",
-    YANDEX_PASSWORD: "mock-only",
+    SMTP_HOST: "smtp.mail.ru", SMTP_USER: "test@example.invalid",
+    SMTP_PASS: "mock-only",
     LEXRADAR_SITE_ORIGIN: origin,
     LEXRADAR_ABUSE_MODE: "single-process",
   };
@@ -370,7 +370,7 @@ test("configuration fails closed without explicit origin and deployment mode", (
     { LEXRADAR_SITE_ORIGIN: "https://evil.invalid/path" },
     { LEXRADAR_SITE_ORIGIN: "http://example.invalid" },
     { LEXRADAR_ABUSE_MODE: "" },
-    { YANDEX_PASSWORD: " " },
+    { SMTP_PASS: " " },
     { LEAD_TO_EMAIL: "bad" },
     { LEXRADAR_ABUSE_MODE: "edge" },
   ])
@@ -409,8 +409,8 @@ test("UTM selection is consistent, bounded, and drops unrelated parameters", () 
 
 // These transport tests use mock receipts/errors. They do NOT confirm real SMTP delivery.
 const env = () => ({
-  YANDEX_EMAIL: "sender@example.invalid",
-  YANDEX_PASSWORD: "mock-only",
+  SMTP_HOST: "smtp.mail.ru", SMTP_USER: "sender@example.invalid",
+  SMTP_PASS: "mock-only",
 });
 const mail: EmailInput = {
   to: "recipient@example.invalid",

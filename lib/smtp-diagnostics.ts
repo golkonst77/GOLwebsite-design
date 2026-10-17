@@ -85,11 +85,11 @@ export async function runSmtpDiagnostic({
   // Production test is intentionally pinned to the requested sender and recipient.
   const config = getSmtpConfig(env)!;
   if (mode === "production-test" && (
-    config.options.host !== "smtp.yandex.ru" || config.options.port !== 465 ||
-    !config.options.secure || config.options.auth.user !== "golkonst@yandex.ru" ||
-    config.from !== "golkonst@yandex.ru" || getLeadRecipient(env) !== "golwebstudio@mail.ru"
+    config.options.host !== "smtp.mail.ru" || config.options.port !== 465 ||
+    !config.options.secure || config.options.auth.user !== "golwebstudio@bk.ru" ||
+    config.from !== "golwebstudio@bk.ru" || getLeadRecipient(env) !== "golwebstudio@bk.ru"
   )) {
-    emit({ stage: "configuration", status: "YANDEX_TARGET_MISMATCH" });
+    emit({ stage: "configuration", status: "MAILRU_TARGET_MISMATCH" });
     return false;
   }
   emit({ stage: "configuration", status: "CONFIG_OK" });

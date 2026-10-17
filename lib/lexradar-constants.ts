@@ -1,4 +1,4 @@
-export const CONSENT_VERSION = "lexradar-2026-10-17-v2";
+export const CONSENT_VERSION = "lexradar-2026-10-17-v3";
 export const UTM_KEYS = [
   "utm_source",
   "utm_medium",

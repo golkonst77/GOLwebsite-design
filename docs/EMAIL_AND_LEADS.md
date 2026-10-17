@@ -2,7 +2,7 @@
 
 LexRadar использует отдельный `/api/lexradar`, форму `components/lexradar-form.tsx` и общий `lib/email-service.ts`. Настройка SMTP и безопасное включение: [инструкция](./lexradar-smtp-launch-checklist.md). Разделы ниже описывают общую форму сайта `/api/lead`.
 
-Цепочка от кнопки «Отправить» до письма в ящике `golwebstudio@mail.ru`.
+Цепочка от кнопки «Отправить» до письма в ящике `golwebstudio@bk.ru`.
 
 ---
 
@@ -25,7 +25,7 @@ LexRadar использует отдельный `/api/lexradar`, форму `co
 | Файл | Роль |
 |------|------|
 | `app/api/lead/route.ts` | POST `/api/lead`, валидация, rate limit, HTML письма |
-| `lib/email-service.ts` | Nodemailer → SMTP из окружения (или прежний Yandex) |
+| `lib/email-service.ts` | Nodemailer → Mail.ru SMTP |
 
 ---
 
@@ -41,9 +41,9 @@ LexRadar использует отдельный `/api/lexradar`, форму `co
        │ honeypot / rate limit
        ▼
   sendEmail() (email-service.ts)
-       │ SMTP STARTTLS :587
+       │ SMTP TLS :465
        ▼
-  Yandex → LEAD_TO_EMAIL (golwebstudio@mail.ru)
+  Mail.ru → MAIL_TO (golwebstudio@bk.ru)
 ```
 
 ---
@@ -118,8 +118,8 @@ LexRadar использует отдельный `/api/lexradar`, форму `co
 ## Письмо админу
 
 - **Тема:** `[GØL] Новая заявка — {Имя}`
-- **Кому:** `LEAD_TO_EMAIL` или `golwebstudio@mail.ru`
-- **От:** `GØL Web Studio <SMTP_FROM>` (или SMTP_USER; в старом режиме YANDEX_EMAIL)
+- **Кому:** golwebstudio@bk.ru (MAIL_TO; LEAD_TO_EMAIL — совместимое имя)
+- **От:** GØL Web Studio <golwebstudio@bk.ru> (SMTP_FROM)
 - **Формат:** HTML (табличная вёрстка ~600px) + text fallback
 - **Блоки:** Имя, Контакт (телефон), Задача, дата (Europe/Moscow), источник gol.studio
 - **Reply-To:** не используется (контакт — только телефон)
@@ -130,54 +130,21 @@ LexRadar использует отдельный `/api/lexradar`, форму `co
 
 ---
 
-## SMTP из окружения
+## Mail.ru SMTP — текущая конфигурация
 
-Основной режим задаётся через SMTP_HOST / SMTP_PORT / SMTP_SECURE / SMTP_USER / SMTP_PASS / SMTP_FROM. См. [ENVIRONMENT.md](./ENVIRONMENT.md). Все формы используют один сервис; успех требует принятия нужного получателя SMTP-сервером.
+smtp.mail.ru:465, TLS с проверкой сертификата, AUTH LOGIN. Пользователь и отправитель — golwebstudio@bk.ru, получатель — этот же ящик. Пароль приложения задаётся только в SMTP_PASS. Fallback на Яндекс удалён.
 
-### Сохранённый старый режим Yandex (только без всех SMTP_*)
+[Однократная настройка и подтверждение получения](./lexradar-mailru-production.md).
 
-Файл: `lib/email-service.ts`
+После одобренного развёртывания:
 
-```ts
-host: '2a02:6b8::19d'        // IPv6 Yandex SMTP
-port: 587
-secure: false
-requireTLS: true
-tls: { servername: 'smtp.yandex.ru' }
-```
-
-### Почему IPv6, а не `smtp.yandex.ru`
-
-На VPS `144.31.253.4`:
-
-- **IPv4** → `smtp.yandex.ru:587` — **timeout**;
-- **IPv6** → `2a02:6b8::19d:587` — **работает**.
-
-`servername: 'smtp.yandex.ru'` нужен для корректного TLS/SNI и проверки сертификата (без `rejectUnauthorized: false`).
-
----
-
-## Диагностика SMTP
-
-### Проверка портов с сервера
-
-```bash
-# IPv4 (может не отвечать на этом VPS)
-nc -vz smtp.yandex.ru 587
-
-# IPv6 (рабочий путь)
-nc -6 -vz 2a02:6b8::19d 587
-```
-
-### Диагностика и реальное тестовое письмо
-
-```sh
-npm run smtp:diagnose
-npm run smtp:diagnose -- --verify
+~~~sh
+npm run smtp:setup
+# Либо отдельная проверка уже настроенного SMTP:
 npm run smtp:diagnose -- --production-test
-```
+~~~
 
-Первая команда не открывает соединения; verify проверяет TLS/аутентификацию без письма; production-test после проверки TLS и авторизации отправляет одно синтетическое письмо строго на golwebstudio@mail.ru через Яндекс. SMTP_PASSWORD и LEAD_TO_EMAIL поддерживаются как прежние имена SMTP_PASS и MAIL_TO. Подробности EAUTH и включения: [инструкция](./lexradar-yandex-production.md). До включения формы подтвердить получение письма в ящике по Test ID. Ни одна команда не меняет LEXRADAR_FORM_ENABLED.
+Форма не включается на основании одного SMTP-ответа: требуется реальное письмо в ящике и подтверждение владельца. SMTP_ACCEPTED не означает автоматическую проверку входящих.
 
 ### Логи
 
@@ -194,7 +161,7 @@ pm2 logs golwebstudio --lines 100
 3. Отправить форму в `#contact` или в блоке solution.
 4. Проверить почту `LEAD_TO_EMAIL`.
 
-Проверять доступность выбранного SMTP_HOST/порта именно с целевого сервера. Старый IPv6 Yandex сохранён для совместимости; новый провайдер задаётся через SMTP_*.
+Проверять smtp.mail.ru:465 именно с целевого сервера. Старые переменные Яндекса игнорируются и удаляются установщиком.
 
 ---
 

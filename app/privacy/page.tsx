@@ -40,10 +40,10 @@ export default function PrivacyPage() {
         <p className="mt-8 text-center text-xs text-white/40">
           Вопросы:{' '}
           <a
-            href="mailto:golwebstudio@mail.ru"
+            href="mailto:golwebstudio@bk.ru"
             className="text-gold/80 hover:text-gold underline underline-offset-2"
           >
-            golwebstudio@mail.ru
+            golwebstudio@bk.ru
           </a>
         </p>
       </article>

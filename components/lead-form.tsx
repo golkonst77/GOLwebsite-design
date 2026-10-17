@@ -10,7 +10,7 @@ interface LeadFormProps {
 }
 
 const SUBMIT_ERROR_MESSAGE =
-  'Не получилось отправить форму. Напишите напрямую: golwebstudio@mail.ru или @teodor77.'
+  'Не получилось отправить форму. Напишите напрямую: golwebstudio@bk.ru или @teodor77.'
 
 const PHONE_PLACEHOLDER = '+7 (___) ___-__-__'
 const PHONE_ERROR_MESSAGE = 'Введите телефон в формате +7 (999) 999-99-99'

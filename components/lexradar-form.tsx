@@ -48,19 +48,19 @@ export default function LexradarForm({ enabled }: { enabled: boolean }) {
       }
       const messages: Record<string, string> = {
         UNAVAILABLE:
-          "Приём заявок временно недоступен. Напишите на golwebstudio@mail.ru.",
+          "Приём заявок временно недоступен. Напишите на golwebstudio@bk.ru.",
         VALIDATION:
           "Проверьте адрес сайта, имя, email, телефон и согласие на обработку данных.",
         RATE_LIMIT: "Слишком много попыток. Попробуйте через 10 минут.",
         SEND_FAILED:
-          "Почтовый сервис отклонил заявку. Попробуйте позже или напишите на golwebstudio@mail.ru.",
+          "Почтовый сервис отклонил заявку. Попробуйте позже или напишите на golwebstudio@bk.ru.",
         ORIGIN:
           "Не удалось проверить источник заявки. Обновите страницу или напишите нам.",
       };
       if (result.code === "SEND_FAILED") identity.current = null;
       if (result.code === "DELIVERY_UNCONFIRMED" || !messages[result.code]) {
         setError(
-          "Статус доставки не подтверждён. Не отправляйте заявку повторно: напишите на golwebstudio@mail.ru, чтобы уточнить статус.",
+          "Статус доставки не подтверждён. Не отправляйте заявку повторно: напишите на golwebstudio@bk.ru, чтобы уточнить статус.",
         );
         setState("uncertain");
       } else {
@@ -69,7 +69,7 @@ export default function LexradarForm({ enabled }: { enabled: boolean }) {
       }
     } catch {
       setError(
-        "Статус доставки не подтверждён. Не отправляйте заявку повторно: напишите на golwebstudio@mail.ru, чтобы уточнить статус.",
+        "Статус доставки не подтверждён. Не отправляйте заявку повторно: напишите на golwebstudio@bk.ru, чтобы уточнить статус.",
       );
       setState("uncertain");
     } finally {
@@ -93,8 +93,8 @@ export default function LexradarForm({ enabled }: { enabled: boolean }) {
         <p className="mb-6 text-sm text-amber-200" role="status">
           Онлайн-приём заявок пока не подтверждён. Для запроса проверки напишите
           на{" "}
-          <a className="underline" href="mailto:golwebstudio@mail.ru">
-            golwebstudio@mail.ru
+          <a className="underline" href="mailto:golwebstudio@bk.ru">
+            golwebstudio@bk.ru
           </a>
           .
         </p>
