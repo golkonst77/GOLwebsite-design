@@ -14,20 +14,20 @@ const env = {
 
 test("production SMTP_PASS and MAIL_TO aliases work without renaming secrets", () => {
   const production = {
-    SMTP_HOST: "smtp.yandex.ru", SMTP_PORT: "465", SMTP_USER: "golkonst@yandex.ru",
-    SMTP_PASS: "test-only", SMTP_FROM: "golkonst@yandex.ru", MAIL_TO: "golwebstudio@mail.ru",
+    SMTP_HOST: "smtp.mail.ru", SMTP_PORT: "465", SMTP_USER: "golwebstudio@bk.ru",
+    SMTP_PASS: "test-only", SMTP_FROM: "golwebstudio@bk.ru", MAIL_TO: "golwebstudio@bk.ru",
   };
   const config = getSmtpConfig(production)!;
   assert.equal(config.options.secure, true);
   assert.equal(config.options.auth.pass, "test-only");
-  assert.equal(getLeadRecipient(production), "golwebstudio@mail.ru");
+  assert.equal(getLeadRecipient(production), "golwebstudio@bk.ru");
   assert.equal(getSmtpConfig({ ...production, SMTP_PASSWORD: "different" }), null);
   assert.equal(getSmtpConfig({ ...production, SMTP_PASSWORD: "" }), null);
   assert.ok(getSmtpConfig({ ...production, SMTP_PASSWORD: "test-only" }));
   assert.equal(getLeadRecipient({ ...production, LEAD_TO_EMAIL: "other@example.invalid" }), null);
   assert.equal(getLeadRecipient({ MAIL_TO: "" }), null);
   assert.equal(getLeadRecipient({ MAIL_TO: "bad" }), null);
-  assert.equal(getLeadRecipient({}), "golwebstudio@mail.ru");
+  assert.equal(getLeadRecipient({}), "golwebstudio@bk.ru");
 });
 
 test("implicit TLS and STARTTLS use configured host with certificate verification", () => {
@@ -44,8 +44,8 @@ test("implicit TLS and STARTTLS use configured host with certificate verificatio
 
 test("invalid or partial generic settings never fall back to legacy credentials", () => {
   const legacy = { YANDEX_EMAIL: "old@example.invalid", YANDEX_PASSWORD: "unit-test-only" };
-  assert.equal(getSmtpConfig(legacy)!.options.host, "2a02:6b8::19d");
-  assert.equal(getSmtpConfig(legacy)!.options.tls.servername, "smtp.yandex.ru");
+  assert.equal(getSmtpConfig(legacy), null);
+  assert.equal(getSmtpConfig({ ...env, SMTP_HOST: "smtp.yandex.ru" }), null);
   assert.equal(getSmtpConfig({ ...legacy, SMTP_HOST: "smtp.mail.ru" }), null);
   for (const patch of [
     { SMTP_HOST: "" }, { SMTP_HOST: "https://smtp.mail.ru" },

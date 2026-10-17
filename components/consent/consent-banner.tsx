@@ -103,10 +103,10 @@ export function ConsentBanner({ inline = false }: { inline?: boolean }) {
               <p className="mt-3 text-xs leading-relaxed text-white/45">
                 Отозвать согласие:{' '}
                 <a
-                  href="mailto:golwebstudio@mail.ru"
+                  href="mailto:golwebstudio@bk.ru"
                   className="text-gold/80 hover:text-gold underline underline-offset-2"
                 >
-                  golwebstudio@mail.ru
+                  golwebstudio@bk.ru
                 </a>
               </p>
               <div className="mt-4 flex flex-col gap-2 sm:flex-row">

@@ -8,10 +8,11 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit --incremental false",
-    "test": "node --import tsx --test tests/*.test.ts",
+    "test": "node --import tsx --test tests/*.test.ts && python3 -B -m unittest discover -s tests -p 'test_smtp_setup.py'",
     "test:browser": "playwright test",
     "check": "npm run typecheck && npm run lint && npm test && npm run build",
-    "smtp:diagnose": "node --import tsx scripts/diagnose-smtp.ts"
+    "smtp:diagnose": "node --import tsx scripts/diagnose-smtp.ts",
+    "smtp:setup": "python3 -B scripts/setup-mailru-smtp.py"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

@@ -11,14 +11,14 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { spawnSync } from "node:child_process";
 
 const env = {
-  SMTP_HOST: "smtp.yandex.ru", SMTP_PORT: "465", SMTP_USER: "golkonst@yandex.ru",
-  SMTP_PASS: "unit-test-secret", SMTP_FROM: "golkonst@yandex.ru", MAIL_TO: "golwebstudio@mail.ru",
+  SMTP_HOST: "smtp.mail.ru", SMTP_PORT: "465", SMTP_USER: "golwebstudio@bk.ru",
+  SMTP_PASS: "unit-test-secret", SMTP_FROM: "golwebstudio@bk.ru", MAIL_TO: "golwebstudio@bk.ru",
 };
 
 test("audit identifies duplicates, empty assignments, overrides, format risks and alias conflicts without values", () => {
   const audit = auditSmtpEnvironment([
-    { name: ".env.production.local", contents: "SMTP_HOST=smtp.yandex.ru\nSMTP_PASS=' secret$VALUE '\nSMTP_PASS=\n" },
-    { name: ".env.local", contents: "export SMTP_PORT=465\nSMTP_PASS=hidden#truncated\nMAIL_TO=golwebstudio@mail.ru\n" },
+    { name: ".env.production.local", contents: "SMTP_HOST=smtp.mail.ru\nSMTP_PASS=' secret$VALUE '\nSMTP_PASS=\n" },
+    { name: ".env.local", contents: "export SMTP_PORT=465\nSMTP_PASS=hidden#truncated\nMAIL_TO=golwebstudio@bk.ru\n" },
   ], { SMTP_PORT: "587" }, { ...env, SMTP_PASSWORD: "conflicting-secret" });
   assert.deepEqual(audit.duplicates, [{ source: ".env.production.local", key: "SMTP_PASS" }]);
   assert.ok(audit.definitions.some((item) => item.key === "SMTP_PASS" && item.empty));
@@ -29,7 +29,7 @@ test("audit identifies duplicates, empty assignments, overrides, format risks an
   assert.ok(audit.formatWarnings.some((item) => item.code === "CHECK_PASSWORD_WHITESPACE"));
   assert.ok(audit.formatWarnings.some((item) => item.code === "CHECK_UNQUOTED_COMMENT"));
   const output = JSON.stringify(audit);
-  for (const secret of ["unit-test-secret", "hidden", "truncated", "conflicting-secret", "secret$VALUE", "golwebstudio@mail.ru"])
+  for (const secret of ["unit-test-secret", "hidden", "truncated", "conflicting-secret", "secret$VALUE", "golwebstudio@bk.ru"])
     assert.ok(!output.includes(secret));
 });
 
@@ -144,9 +144,9 @@ test("arbitrary errors cannot inject text into safe diagnostic codes", () => {
 test("actual CLI loads production .env, blocks duplicates, leaks no values and writes no settings", () => {
   const directory = mkdtempSync(join(tmpdir(), "lexradar-smtp-"));
   const contents = [
-    "SMTP_HOST=smtp.yandex.ru", "SMTP_PORT=465", "SMTP_USER=golkonst@yandex.ru",
+    "SMTP_HOST=smtp.mail.ru", "SMTP_PORT=465", "SMTP_USER=golwebstudio@bk.ru",
     "SMTP_PASS=first-test-secret", "SMTP_PASS=second-test-secret",
-    "SMTP_FROM=golkonst@yandex.ru", "MAIL_TO=golwebstudio@mail.ru",
+    "SMTP_FROM=golwebstudio@bk.ru", "MAIL_TO=golwebstudio@bk.ru",
     "LEXRADAR_FORM_ENABLED=false",
   ].join("\n");
   try {
