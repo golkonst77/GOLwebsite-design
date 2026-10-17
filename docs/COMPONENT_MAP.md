@@ -2,6 +2,8 @@
 
 Карта компонентов лендинга: назначение, состояния, зависимости, что нельзя ломать.
 
+Уточнение 17.10.2026: hero содержит янтарную карточку LexRadar с финальным текстом этапа 006 и встроенный cookie-баннер. Полная актуальная карта и границы двух API — [аудит 1.3.1](audit/2026-10-17/ARCHITECTURE.md); исторические размеры/эффекты ниже не спецификация точных текущих CSS.
+
 **Точка входа страницы:** `app/page.tsx` (server) → `components/home-page.tsx` (client) + `components/footer.tsx` (server).
 
 ---
@@ -18,6 +20,8 @@ Problem → Solution (+ LeadForm compact)
 Services
   ↓
 Process → Cases → Testimonials → Trust
+  ↓
+LexRadarPromo
   ↓
 FinalCTA (+ LeadForm contact)
   ↓
@@ -473,7 +477,7 @@ Footer (+ BuildVersion)
 
 ## Deploy flow
 
-См. [DEPLOYMENT.md](./DEPLOYMENT.md) — `deploy.bat`, PM2 `golwebstudio`, не трогать `.env.local` в git.
+См. [DEPLOYMENT.md](./DEPLOYMENT.md): npm/Node 24, отдельно согласованное обновление PM2. Старый Windows BAT с pnpm/reset не является текущей процедурой; секретные env в Git не добавлять.
 
 ---
 
@@ -488,7 +492,7 @@ Footer (+ BuildVersion)
        │ sendEmail()
        ▼
   lib/email-service.ts
-       │ SMTP :587 (IPv6)
+       │ Mail.ru: TLS/порт из smtp-config (default 465)
        ▼
   Mail.ru → получатель из getLeadRecipient()
 
@@ -518,7 +522,7 @@ Footer (+ BuildVersion)
 
 ## `components/ui/*`
 
-shadcn/Radix primitives — **не используются** на основном лендинге напрямую (только инфраструктура проекта). Новые секции лендинга — в `components/*.tsx`, не в ui/, unless deliberate.
+Общая форма прямо использует `components/ui/checkbox.tsx` (Radix Checkbox). Остальная библиотека имеет внутренние зависимости; отсутствие найденного импорта не доказывает неиспользование. Полный статический граф и назначение каждого файла — в [инвентаризации аудита](audit/2026-10-17/INVENTORY.md).
 
 ---
 

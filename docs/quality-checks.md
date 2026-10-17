@@ -18,3 +18,7 @@ ESLint 10 с typescript-eslint, React hooks rules/exhaustive-deps и офици�
 Браузерные проверки запускаются отдельно `npm run test:browser`, используют локальный production build, не рабочий сайт. Системный Chromium можно задать через CHROMIUM_EXECUTABLE_PATH; иначе используется /usr/bin/chromium, если найден, либо браузер Playwright (установить отдельно `npx playwright install chromium`). На облачном контейнере используется --no-sandbox только для локальной QA-сессии. Тесты сами поднимают два локальных сервера на 3100/3101: с выключенной формой и с mock-конфигурацией. Все POST включённой формы перехвачены тестами, SMTP-писем они не отправляют. Подробности и SMTP-подготовка — в документах LexRadar-002. Секреты не нужны для unit и browser mocks.
 
 Настройки npm/Node для Vercel и диагностика старых pnpm deployments: [LexRadar-003](lexradar-003-vercel-npm.md). `vercel.json` явно задаёт `npm ci --include=dev` и `npm run build`; Node major закреплён engines=24.x.
+
+## Проверка снимка 1.3.1
+
+[Аудит 17.10.2026](audit/2026-10-17/TEST_RESULTS.md): 69 Node + 11 Python тестов, 25 browser сценариев, сборка и дополнительные проверки вне штатного покрытия. Зелёные тесты hero/LexRadar не доказывают отсутствие дефектов общей формы и footer. Новые материалы не заменяют исторические отчёты этапа 002.
