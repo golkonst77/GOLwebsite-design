@@ -104,7 +104,9 @@ test("home regression: sections, UTM promo, mobile menu and invisible links", as
   await expect(
     page.getByRole("button", { name: "Закрыть меню" }),
   ).toHaveAttribute("aria-expanded", "true");
-  await page.getByRole("link", { name: "LexRadar", exact: true }).focus();
+  await page
+    .getByRole("link", { name: "Проверка сайтов", exact: true })
+    .focus();
   await page.keyboard.press("Escape");
   await expect(
     page.getByRole("button", { name: "Открыть меню" }),
@@ -117,7 +119,9 @@ test("home regression: sections, UTM promo, mobile menu and invisible links", as
     /opacity-100/,
   );
   await page.getByRole("button", { name: "Открыть меню" }).click();
-  await page.getByRole("link", { name: "LexRadar", exact: true }).click();
+  await page
+    .getByRole("link", { name: "Проверка сайтов", exact: true })
+    .click();
   await expect(page).toHaveURL(
     /lexradar\?utm_source=partner&utm_campaign=lexradar/,
   );

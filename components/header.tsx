@@ -69,7 +69,7 @@ export default function Header({ isScrolled }: HeaderProps) {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-12">
+          <div className="hidden md:flex items-center gap-5 lg:gap-8 xl:gap-12">
             <Link
               href="#cases"
               className="text-sm tracking-[0.1em] text-muted-foreground hover:text-foreground transition-colors duration-300"
@@ -89,7 +89,7 @@ export default function Header({ isScrolled }: HeaderProps) {
               Отзывы
             </Link>
             <LexradarLink className="text-sm tracking-[0.1em] text-gold">
-              LexRadar
+              Проверка сайтов
             </LexradarLink>
           </div>
 
@@ -175,7 +175,7 @@ export default function Header({ isScrolled }: HeaderProps) {
             className="text-3xl font-light text-gold"
             onClick={() => setIsMenuOpen(false)}
           >
-            LexRadar
+            Проверка сайтов
           </LexradarLink>
           <Link
             href="#contact"

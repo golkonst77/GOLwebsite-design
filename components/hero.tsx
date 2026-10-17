@@ -2,6 +2,9 @@
 
 import { useEffect, useState, useRef, type MouseEvent as ReactMouseEvent } from 'react'
 import Image from 'next/image'
+import { ArrowUpRight } from 'lucide-react'
+import LexradarLink from './lexradar-link'
+import './hero.css'
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
@@ -216,7 +219,8 @@ export default function Hero() {
   return (
     <section 
       ref={heroRef}
-      className="relative min-h-screen w-full overflow-hidden flex items-center justify-center"
+      className="gol-hero relative min-h-screen w-full overflow-hidden flex items-center justify-center"
+      aria-labelledby="home-heading"
     >
       {/* Animated gradient background */}
       <div 
@@ -247,85 +251,80 @@ export default function Hero() {
         }}
       />
 
-      {/* Main content */}
-      <div className="relative z-10 w-full px-6 md:px-12 max-w-[1400px] mx-auto">
-        <div className="grid grid-cols-1 items-center gap-12 pt-20 pb-16 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16 lg:pt-24">
-          {/* Left: keep as-is */}
-          <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-            {/* Tagline */}
-            <div
-              className={`overflow-hidden mb-8 ${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
-              style={{ animationDelay: '0.2s' }}
-            >
-              <p className="text-sm md:text-base tracking-[0.4em] uppercase text-gold font-light">
-                Digital Design Studio
-              </p>
-            </div>
-
-            {/* Main headline */}
-            <h1
-              className={`text-[12vw] md:text-[10vw] lg:text-[72px] font-bold leading-[0.9] tracking-[-0.03em] mb-8 ${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
-              style={{ animationDelay: '0.4s' }}
-            >
-              <span className="block text-foreground">Сайты для услуг и малого бизнеса,</span>
-              <span className="block text-gradient">которые приводят заявки</span>
-            </h1>
-
-            {/* Subheadline */}
+      {/* Two directions share one composition; the portfolio keeps its own column. */}
+      <div className="hero-layout relative z-10">
+        <div className="hero-grid">
+          <div className="hero-copy">
             <p
-              className={`text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl font-light leading-relaxed mb-12 ${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
-              style={{ animationDelay: '0.6s' }}
+              className={`hero-eyebrow ${isVisible ? "animate-fade-up" : "opacity-0"}`}
             >
-              Чёткая структура, понятный оффер и путь к обращению.
-              <br className="hidden md:block" />
+              Digital Design Studio
+            </p>
+            <h1
+              id="home-heading"
+              className={`hero-heading ${isVisible ? "animate-fade-up" : "opacity-0"}`}
+              style={{ animationDelay: "0.15s" }}
+            >
+              <span className="block text-foreground">
+                Сайты для малого бизнеса,
+              </span>{" "}
+              <span className="block text-gradient-gold">
+                которые приводят заявки
+              </span>
+            </h1>
+            <p
+              className={`hero-description ${isVisible ? "animate-fade-up" : "opacity-0"}`}
+              style={{ animationDelay: "0.25s" }}
+            >
+              Чёткая структура, понятный оффер и путь к обращению.{" "}
+              <br className="hidden xl:block" />
               Без перегрузки и дизайна ради дизайна.
             </p>
-
-            {/* CTA */}
             <div
-              className={`${isVisible ? 'animate-fade-up' : 'opacity-0'} flex items-center gap-3`}
-              style={{ animationDelay: '0.8s' }}
+              className={`hero-actions ${isVisible ? "animate-fade-up" : "opacity-0"}`}
+              style={{ animationDelay: "0.35s" }}
             >
-              <a
-                href="#contact"
-                className="group relative inline-flex items-center gap-4 rounded-full bg-gold px-10 py-5 text-background shadow-[0_18px_50px_rgba(212,175,55,0.18)] transition-transform duration-500 ease-out overflow-hidden supports-[hover:hover]:hover:-translate-y-[1px] active:translate-y-0"
-              >
-                <span className="absolute inset-0 bg-black/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
-                <span className="relative z-10 text-sm tracking-[0.2em] uppercase">
-                  Обсудить сайт
-                </span>
-                <svg
-                  className="relative z-10 w-5 h-5 text-background transition-transform duration-500 transform group-hover:translate-x-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
+              <a href="#contact" className="hero-primary">
+                Обсудить сайт <ArrowUpRight aria-hidden="true" size={17} />
               </a>
-
-              <a
-                href="#cases"
-                className="group relative inline-flex items-center justify-center rounded-full px-10 py-5 border border-white/15 bg-white/[0.02] text-sm tracking-[0.2em] uppercase text-white/85 transition-all duration-300 hover:border-white/30 hover:bg-white/[0.06]"
-              >
+              <a href="#cases" className="hero-secondary">
                 Смотреть кейсы
               </a>
             </div>
-
-            <p className="mt-4 text-xs tracking-[0.14em] text-white/40">
-              Запуск за 2–3 недели · фиксируем в договоре · не пропадаем после запуска
+            <p className="hero-note">
+              Запуск за 2–3 недели · фиксируем в договоре · не пропадаем после
+              запуска
             </p>
           </div>
 
+          <section
+            className={`hero-legal ${isVisible ? "animate-fade-up" : "opacity-0"}`}
+            aria-labelledby="hero-legal-heading"
+            style={{ animationDelay: "0.4s" }}
+          >
+            <div className="hero-legal-copy">
+              <p className="hero-legal-label">02 / Юридическая проверка · РФ</p>
+              <h2 id="hero-legal-heading">
+                Сайт может работать — и <span>нарушать закон</span>
+              </h2>
+              <p className="hero-legal-description">
+                Проверьте персональные данные, согласия и обязательные
+                документы.{" "}
+                <span className="hero-legal-offer">
+                  Бесплатная предварительная проверка LexRadar.
+                </span>
+              </p>
+            </div>
+            <LexradarLink className="hero-legal-cta">
+              Проверить сайт бесплатно{" "}
+              <ArrowUpRight aria-hidden="true" size={17} />
+            </LexradarLink>
+          </section>
+
           {/* Right: premium preview-card (lighter, high-contrast) */}
           <div
-            className={`${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
-            style={{ animationDelay: '0.55s' }}
+            className={`hero-visual ${isVisible ? 'animate-fade-up' : 'opacity-0'}`}
+            style={{ animationDelay: '0.3s' }}
           >
             <div
               ref={cardsWrapRef}
@@ -339,9 +338,9 @@ export default function Hero() {
               }}
             >
               {/* wrapper: relative; cards: absolute */}
-              <div className="relative h-[520px] w-full overflow-visible lg:h-[560px]">
+              <div className="hero-cards-stage relative w-full overflow-visible">
                 {/* card-back-1 */}
-                <div className="absolute left-0 top-[20px] z-20 h-[520px] w-[78%] origin-center overflow-hidden rounded-[34px] border border-white/15 shadow-[0_48px_160px_rgba(0,0,0,0.62)] opacity-90 transform-gpu will-change-transform rotate-[-7deg] scale-[0.96] transition-transform transition-opacity duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)] lg:group-hover:-translate-x-16 lg:group-hover:-translate-y-10 lg:group-hover:rotate-[-28deg] lg:group-hover:scale-[1] lg:group-hover:opacity-100">
+                <div className="absolute left-0 top-[20px] z-20 h-[520px] w-[78%] origin-center overflow-hidden rounded-[34px] border border-white/15 shadow-[0_48px_160px_rgba(0,0,0,0.62)] opacity-90 transform-gpu will-change-transform rotate-[-7deg] scale-[0.96] transition-transform transition-opacity duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)] lg:group-hover:-translate-x-4 lg:group-hover:-translate-y-4 lg:group-hover:rotate-[-10deg] lg:group-hover:scale-[1] lg:group-hover:opacity-100">
                   {previousCardsByIndex[1]?.src ? (
                     <Image
                       key={`prev-${previousCardsByIndex[1].src}`}
@@ -390,7 +389,7 @@ export default function Hero() {
                 </div>
 
                 {/* card-back-2 */}
-                <div className="absolute bottom-[30px] right-0 z-10 h-[520px] w-[78%] origin-center overflow-hidden rounded-[34px] border border-white/15 shadow-[0_44px_150px_rgba(0,0,0,0.60)] opacity-80 transform-gpu will-change-transform rotate-[7deg] scale-[0.94] transition-transform transition-opacity duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)] lg:group-hover:translate-x-16 lg:group-hover:translate-y-10 lg:group-hover:rotate-[28deg] lg:group-hover:scale-[1] lg:group-hover:opacity-100">
+                <div className="absolute bottom-[30px] right-0 z-10 h-[520px] w-[78%] origin-center overflow-hidden rounded-[34px] border border-white/15 shadow-[0_44px_150px_rgba(0,0,0,0.60)] opacity-80 transform-gpu will-change-transform rotate-[7deg] scale-[0.94] transition-transform transition-opacity duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)] lg:group-hover:translate-x-4 lg:group-hover:translate-y-4 lg:group-hover:rotate-[10deg] lg:group-hover:scale-[1] lg:group-hover:opacity-100">
                   {previousCardsByIndex[2]?.src ? (
                     <Image
                       key={`prev-${previousCardsByIndex[2].src}`}
@@ -493,14 +492,6 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div 
-          className={`absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}
-          style={{ animationDelay: '1.2s' }}
-        >
-          <span className="text-xs tracking-[0.3em] uppercase text-muted-foreground">Scroll</span>
-          <div className="w-px h-16 bg-gradient-to-b from-gold to-transparent" />
-        </div>
       </div>
 
       {/* Large Ø watermark */}
