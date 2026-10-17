@@ -6,39 +6,35 @@ interface UseInViewOptions {
   once?: boolean
 }
 
-export function useInView(ref: React.RefObject<HTMLElement>, options: UseInViewOptions = {}) {
+export function useInView(ref: React.RefObject<HTMLElement | null>, options: UseInViewOptions = {}) {
   const [isInView, setIsInView] = useState(false)
   const hasBeenInView = useRef(false)
+  const { threshold = 0.1, margin = '0px', once = false } = options
 
   useEffect(() => {
+    const element = ref.current
+    if (!element) return
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsInView(true)
           hasBeenInView.current = true
-          if (options.once) {
+          if (once) {
             observer.unobserve(entry.target)
           }
-        } else if (!options.once) {
+        } else if (!once) {
           setIsInView(false)
         }
       },
       {
-        threshold: options.threshold ?? 0.1,
-        rootMargin: options.margin ?? '0px',
+        threshold: threshold,
+        rootMargin: margin,
       }
     )
 
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [ref, threshold, margin, once])
 
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
-    }
-  }, [ref, options])
-
-  return isInView || (options.once && hasBeenInView.current)
+  return isInView || (once && hasBeenInView.current)
 }

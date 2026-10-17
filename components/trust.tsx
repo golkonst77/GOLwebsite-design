@@ -50,7 +50,7 @@ const guarantees = [
 ]
 
 export default function Trust() {
-  const ref = useRef(null)
+  const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true })
 
   return (
