@@ -118,8 +118,8 @@ LexRadar использует отдельный `/api/lexradar`, форму `co
 ## Письмо админу
 
 - **Тема:** `[GØL] Новая заявка — {Имя}`
-- **Кому:** `LEAD_TO_EMAIL` или `golwebstudio@bk.ru`
-- **От:** `GØL Web Studio <SMTP_FROM>` (или SMTP_USER; в старом режиме YANDEX_EMAIL)
+- **Кому:** golwebstudio@bk.ru (MAIL_TO; LEAD_TO_EMAIL — совместимое имя)
+- **От:** GØL Web Studio <golwebstudio@bk.ru> (SMTP_FROM)
 - **Формат:** HTML (табличная вёрстка ~600px) + text fallback
 - **Блоки:** Имя, Контакт (телефон), Задача, дата (Europe/Moscow), источник gol.studio
 - **Reply-To:** не используется (контакт — только телефон)

@@ -13,6 +13,7 @@ next.user-config.*
 .env.*
 !.env.example
 __pycache__/
+.smtp-setup-*
 
 # Common ignores
 node_modules
