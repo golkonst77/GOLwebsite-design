@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import LexradarForm from "@/components/lexradar-form";
 import "./lexradar.css";
 
 // Read the verified form switch at runtime, without caching SMTP readiness.
@@ -86,6 +87,9 @@ const documents = [
 ];
 
 export default function LexradarPage() {
+  const enabled =
+    process.env.LEXRADAR_FORM_ENABLED === "true" &&
+    Boolean(process.env.YANDEX_EMAIL && process.env.YANDEX_PASSWORD);
   return (
     <div className="lexradar">
       <header className="lr-header">
@@ -305,7 +309,7 @@ export default function LexradarPage() {
             </p>
           </div>
           <div className="lr-panel">
-            <p className="lr-muted">Онлайн-приём заявок будет доступен после проверки доставки. Напишите на <a href="mailto:golwebstudio@mail.ru">golwebstudio@mail.ru</a>.</p>
+            <LexradarForm enabled={enabled} />
           </div>
         </section>
       </main>
