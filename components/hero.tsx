@@ -307,11 +307,11 @@ export default function Hero() {
             <div className="hero-legal-copy">
               <p className="hero-legal-label">02 / Юридическая проверка · РФ</p>
               <h2 id="hero-legal-heading">
-                ВАШ САЙТ МОЖЕТ <span>ПРИВЕСТИ К ШТРАФУ</span>
+                Ваш сайт работает на ваш бизнес. Убедитесь, что он не работает против вас.
               </h2>
               <p className="hero-legal-description">
-                Ошибки в персональных данных, согласиях и обязательных документах
-                могут дорого обойтись бизнесу.
+                Юридические ошибки в оформлении сайта могут обернуться серьёзными
+                штрафами. Проверьте возможные риски заранее.
               </p>
             </div>
             <LexradarLink className="hero-legal-cta">

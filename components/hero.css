@@ -294,7 +294,7 @@
 .gol-hero .hero-legal-label { color: #4b291b; font-weight: 600; }
 .gol-hero .hero-legal h2 {
   color: #24150f;
-  font-size: clamp(30px, 7.6vw, 44px);
+  font-size: clamp(26px, 6.5vw, 38px);
   line-height: 1.04;
   font-weight: 800;
   letter-spacing: -.035em;
@@ -323,7 +323,7 @@
 .gol-hero .hero-cookies:empty { display: none; }
 @media (min-width: 640px) {
   .gol-hero .hero-legal { padding: 32px; }
-  .gol-hero .hero-legal h2 { font-size: 44px; }
+  .gol-hero .hero-legal h2 { font-size: 36px; }
   .gol-hero .hero-legal-cta { font-size: 14px; }
 }
 @media (min-width: 1024px) {
@@ -337,7 +337,7 @@
   .gol-hero .hero-description { margin-bottom: 18px; font-size: 15px; }
   .gol-hero .hero-eyebrow { margin-bottom: 12px; }
   .gol-hero .hero-legal { padding: 32px; gap: 20px; }
-  .gol-hero .hero-legal h2 { font-size: clamp(36px, 3.4vw, 49px); }
+  .gol-hero .hero-legal h2 { font-size: clamp(30px, 2.6vw, 38px); }
   .gol-hero .hero-cards-stage { height: 200px; }
   .gol-hero .hero-cards-stage > div { height: 140px; width: 68%; left: 12%; right: auto; top: 40px; bottom: auto; }
   .gol-hero .hero-layout { padding-top: 112px; padding-bottom: 32px; }
@@ -356,7 +356,7 @@
   .gol-hero .hero-legal { padding: 22px; gap: 14px; }
   .gol-hero .hero-legal-symbol { position: absolute; right: 18px; top: 18px; width: 28px; height: 28px; font-size: 20px; }
   .gol-hero .hero-legal-label { max-width: 190px; font-size: 9px; margin-bottom: 16px; }
-  .gol-hero .hero-legal h2 { font-size: 30px; margin-bottom: 12px; }
+  .gol-hero .hero-legal h2 { font-size: 26px; margin-bottom: 12px; }
   .gol-hero .hero-legal-description { font-size: 13px; }
   .gol-hero .hero-legal-cta { font-size: 11px; min-height: 54px; gap: 6px; }
 }

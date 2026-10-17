@@ -10,7 +10,7 @@ const sizes = [
   [1440, 900],
   [1920, 1080],
 ];
-mkdirSync("docs/lexradar-005-screenshots", { recursive: true });
+mkdirSync("test-results/lexradar-006-screenshots", { recursive: true });
 for (const [width, height] of sizes)
   test(`homepage two directions ${width}x${height}`, async ({ page }) => {
     await page.setViewportSize({ width, height });
@@ -21,7 +21,7 @@ for (const [width, height] of sizes)
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/?utm_source=partner&utm_campaign=hero005");
     await expect(page.getByRole("dialog", { name: "Настройки cookies" })).toBeVisible();
-    await page.screenshot({path: `docs/lexradar-005-screenshots/cookies-${width}.png`, animations: "disabled"});
+    await page.screenshot({path: `test-results/lexradar-006-screenshots/cookies-${width}.png`, animations: "disabled"});
     const banner = await page.getByRole("dialog", { name: "Настройки cookies" }).boundingBox();
     const legalBefore = await page.locator(".hero-legal").boundingBox();
     expect(banner!.y).toBeGreaterThanOrEqual(legalBefore!.y + legalBefore!.height);
@@ -37,7 +37,7 @@ for (const [width, height] of sizes)
       "услуг",
     );
     await expect(page.locator(".hero-legal")).toContainText(
-      "ВАШ САЙТ МОЖЕТ ПРИВЕСТИ К ШТРАФУ",
+      "Ваш сайт работает на ваш бизнес. Убедитесь, что он не работает против вас.",
     );
     await expect(page.locator(".hero-legal")).toContainText(
       "Юридическая проверка · РФ",
@@ -47,7 +47,7 @@ for (const [width, height] of sizes)
       "/lexradar?utm_source=partner&utm_campaign=hero005",
     );
     await page.screenshot({
-      path: `docs/lexradar-005-screenshots/after-${width}.png`,
+      path: `test-results/lexradar-006-screenshots/after-${width}.png`,
       animations: "disabled",
     });
     expect(
