@@ -10,15 +10,15 @@ This repository is linked to a [v0](https://v0.app) project. You can continue de
 
 ## Getting Started
 
-First, run the development server:
+Use Node.js 24.x and npm (tested with npm 11.9.0). The only supported lockfile is `package-lock.json`; do not generate pnpm/yarn/bun lockfiles.
 
 ```bash
+npm ci
+npm run check
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
+
+Vercel uses the repository's `vercel.json`: `npm ci --include=dev` and `npm run build`. See [Vercel Preview troubleshooting](docs/lexradar-003-vercel-npm.md) for project settings and commit checks.
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
