@@ -1,4 +1,6 @@
 import nodemailer, { type SendMailOptions } from "nodemailer";
+import { getSmtpConfig } from "./smtp-config";
+import { z } from "zod";
 
 export type EmailInput = {
   to: string;
@@ -31,24 +33,13 @@ export type MailTransport = {
 export function smtpOptions(
   env: Readonly<Record<string, string | undefined>> = process.env,
 ) {
-  return {
-    host: "2a02:6b8::19d",
-    port: 587,
-    secure: false,
-    requireTLS: true,
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
-    tls: { servername: "smtp.yandex.ru" },
-    auth: {
-      user: env.YANDEX_EMAIL?.trim() || "",
-      pass: env.YANDEX_PASSWORD?.trim() || "",
-    },
-  };
+  const config = getSmtpConfig(env);
+  if (!config) throw new Error("EMAIL_NOT_CONFIGURED");
+  return config.options;
 }
 
 export function createEmailSender({
-  makeTransport = () => nodemailer.createTransport(smtpOptions()),
+  makeTransport,
   env = () => process.env,
   timeoutMs = 20000,
 }: {
@@ -58,10 +49,12 @@ export function createEmailSender({
 } = {}) {
   return async function sendEmail(input: EmailInput): Promise<EmailResult> {
     const settings = env();
-    if (!settings.YANDEX_EMAIL?.trim() || !settings.YANDEX_PASSWORD?.trim())
+    const config = getSmtpConfig(settings);
+    if (!config)
       return { success: false, error: "EMAIL_NOT_CONFIGURED" };
     if (
-      !input.to ||
+      !z.string().email().safeParse(input.to).success ||
+      (input.replyTo !== undefined && !z.string().email().safeParse(input.replyTo).success) ||
       !input.subject ||
       /[\r\n]/.test(input.to + input.subject + (input.replyTo || ""))
     )
@@ -69,17 +62,22 @@ export function createEmailSender({
     let transport: MailTransport | undefined;
     let timer: ReturnType<typeof setTimeout> | undefined;
     try {
-      transport = makeTransport();
+      transport = makeTransport
+        ? makeTransport()
+        : nodemailer.createTransport(config.options);
       const activeTransport = transport;
       const delivery = activeTransport
         .sendMail({
-          from: `"GØL Web Studio" <${settings.YANDEX_EMAIL.trim()}>`,
           ...input,
+          from: `"GØL Web Studio" <${config.from}>`,
           text: input.text || input.html.replace(/<[^>]*>/g, ""),
           encoding: "utf-8",
         })
         .then((receipt): EmailResult =>
-          receipt.accepted?.length && !receipt.rejected?.length
+          receipt.accepted?.some(
+            (address) => typeof address === "string" &&
+              address.toLowerCase() === input.to.toLowerCase(),
+          ) && !receipt.rejected?.length
             ? { success: true, messageId: receipt.messageId }
             : { success: false, error: "SMTP_REJECTED" },
         );

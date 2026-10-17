@@ -1,5 +1,7 @@
 # Форма заявок и почта
 
+LexRadar использует отдельный `/api/lexradar`, форму `components/lexradar-form.tsx` и общий `lib/email-service.ts`. Настройка SMTP и безопасное включение: [инструкция](./lexradar-smtp-launch-checklist.md). Разделы ниже описывают общую форму сайта `/api/lead`.
+
 Цепочка от кнопки «Отправить» до письма в ящике `golwebstudio@mail.ru`.
 
 ---
@@ -23,7 +25,7 @@
 | Файл | Роль |
 |------|------|
 | `app/api/lead/route.ts` | POST `/api/lead`, валидация, rate limit, HTML письма |
-| `lib/email-service.ts` | Nodemailer → Yandex SMTP |
+| `lib/email-service.ts` | Nodemailer → SMTP из окружения (или прежний Yandex) |
 
 ---
 
@@ -69,7 +71,7 @@
 ## Honeypot (`website`)
 
 - Скрытое поле в DOM (`tabIndex={-1}`, вне экрана).
-- Если бот заполнил `website` → API отвечает `{ "ok": true }` **без отправки письма** (тихий успех для бота).
+- Если бот заполнил `website` → API отвечает HTTP 400 / `VALIDATION_ERROR`, без отправки и без фиктивного успеха.
 
 ---
 
@@ -117,7 +119,7 @@
 
 - **Тема:** `[GØL] Новая заявка — {Имя}`
 - **Кому:** `LEAD_TO_EMAIL` или `golwebstudio@mail.ru`
-- **От:** `GØL Web Studio <YANDEX_EMAIL>`
+- **От:** `GØL Web Studio <SMTP_FROM>` (или SMTP_USER; в старом режиме YANDEX_EMAIL)
 - **Формат:** HTML (табличная вёрстка ~600px) + text fallback
 - **Блоки:** Имя, Контакт (телефон), Задача, дата (Europe/Moscow), источник gol.studio
 - **Reply-To:** не используется (контакт — только телефон)
@@ -128,7 +130,11 @@
 
 ---
 
-## SMTP (Yandex) — production
+## SMTP из окружения
+
+Основной режим задаётся через SMTP_HOST / SMTP_PORT / SMTP_SECURE / SMTP_USER / SMTP_PASSWORD / SMTP_FROM. См. [ENVIRONMENT.md](./ENVIRONMENT.md). Все формы используют один сервис; успех требует принятия нужного получателя SMTP-сервером.
+
+### Сохранённый старый режим Yandex (только без всех SMTP_*)
 
 Файл: `lib/email-service.ts`
 
@@ -163,30 +169,15 @@ nc -vz smtp.yandex.ru 587
 nc -6 -vz 2a02:6b8::19d 587
 ```
 
-### Тестовый скрипт
+### Диагностика и реальное тестовое письмо
 
-Путь: `scripts/test-yandex-smtp.mjs`
-
-Запуск на сервере (из корня проекта, с настроенным `.env.local`):
-
-```bash
-cd /var/www/golwebstudio
-node scripts/test-yandex-smtp.mjs
+```sh
+npm run smtp:diagnose
+npm run smtp:diagnose -- --verify
+npm run smtp:diagnose -- --send-test
 ```
 
-Скрипт читает `YANDEX_EMAIL` / `YANDEX_PASSWORD` из окружения (через dotenv или export) и отправляет тестовое письмо **без участия формы**.
-
-> Если файла нет в репозитории — создать по образцу production transporter из `email-service.ts`.
-
-### Проверка API с сервера
-
-```bash
-curl -X POST https://golwebstudio.ru/api/lead \
-  -H "Content-Type: application/json" \
-  -d '{"name":"SMTP Test","contact":"+7 (900) 111-22-33","message":"test","website":""}'
-```
-
-Успех: `{"ok":true}`. Ошибка SMTP: `{"ok":false,"error":"SEND_FAILED"}`.
+Первая команда не открывает соединения; verify проверяет TLS/аутентификацию без письма; send-test отправляет одно синтетическое письмо на LEAD_TO_EMAIL (по умолчанию golwebstudio@mail.ru). До включения формы подтвердить получение письма в ящике по Test ID. Ни одна команда не меняет LEXRADAR_FORM_ENABLED.
 
 ### Логи
 
@@ -203,7 +194,7 @@ pm2 logs golwebstudio --lines 100
 3. Отправить форму в `#contact` или в блоке solution.
 4. Проверить почту `LEAD_TO_EMAIL`.
 
-Локально SMTP может работать и по IPv4, и по IPv6 — на production важен IPv6 host.
+Проверять доступность выбранного SMTP_HOST/порта именно с целевого сервера. Старый IPv6 Yandex сохранён для совместимости; новый провайдер задаётся через SMTP_*.
 
 ---
 

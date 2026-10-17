@@ -260,7 +260,7 @@ export async function POST(request: NextRequest) {
     // 2. Honeypot
     const website = trimField(body?.website)
     if (website) {
-      return NextResponse.json({ ok: true })
+      return NextResponse.json({ ok: false, error: 'VALIDATION_ERROR' }, { status: 400 })
     }
 
     // 3. Согласие на обработку ПД
