@@ -8,10 +8,10 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit --incremental false",
-    "test": "node --test tests/*.test.cjs",
+    "test": "node --import tsx --test tests/*.test.ts",
     "test:browser": "playwright test",
     "check": "npm run typecheck && npm run lint && npm test && npm run build",
-    "smtp:diagnose": "tsx scripts/diagnose-smtp.ts"
+    "smtp:diagnose": "node --import tsx scripts/diagnose-smtp.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

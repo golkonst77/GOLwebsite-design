@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getLexradarConfig } from "@/lib/lexradar-config";
 import LexradarForm from "@/components/lexradar-form";
 import "./lexradar.css";
 
@@ -87,9 +88,8 @@ const documents = [
 ];
 
 export default function LexradarPage() {
-  const enabled =
-    process.env.LEXRADAR_FORM_ENABLED === "true" &&
-    Boolean(process.env.YANDEX_EMAIL && process.env.YANDEX_PASSWORD);
+  const config = getLexradarConfig();
+  const enabled = config.enabled && config.ready;
   return (
     <div className="lexradar">
       <header className="lr-header">
