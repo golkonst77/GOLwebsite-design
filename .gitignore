@@ -24,3 +24,11 @@ node_modules
 /test-results/
 /playwright-report/
 /work/
+
+# Private local logs and backups (never release artifacts)
+*.log
+*.bak
+*.backup
+*.backup-*
+/backups/
+/secrets/

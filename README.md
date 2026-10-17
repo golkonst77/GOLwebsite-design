@@ -1,35 +1,47 @@
-# GOLwebsite-design
+# GØL Web Studio · 1.3.1
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+Сайт веб-студии и LexRadar — приём заявок на бесплатную предварительную юридическую проверку сайта. Заявки обрабатываются вручную. Автоматический аудит не подключён.
 
-## Built with v0
+- [Рабочий сайт](https://www.golwebstudio.ru/) · [LexRadar](https://www.golwebstudio.ru/lexradar)
+- [Документация](docs/README.md) · [Изменения](CHANGELOG.md) · [Статус и подтверждения](docs/PROJECT_STATUS.md)
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+## Разработка
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_BgkR38LZmiVkrvEczMte8Ev3guZf)
+Node.js **24.x**, npm **11.9.0**, Python 3 для тестов установщика. Единственный lockfile — `package-lock.json`. Next.js 16.4.2, React 19, Tailwind CSS 4, Nodemailer. Не смешивать npm с pnpm/yarn.
 
-## Getting Started
-
-Use Node.js 24.x and npm (tested with npm 11.9.0). The only supported lockfile is `package-lock.json`; do not generate pnpm/yarn/bun lockfiles.
-
-```bash
+```sh
 npm ci
-npm run check
 npm run dev
 ```
 
-Vercel uses the repository's `vercel.json`: `npm ci --include=dev` and `npm run build`. See [Vercel Preview troubleshooting](docs/lexradar-003-vercel-npm.md) for project settings and commit checks.
+Открыть http://localhost:3000. Для просмотра сайта SMTP не требуется; форма на новой установке остаётся закрытой. Имена серверных переменных описаны в [ENVIRONMENT](docs/ENVIRONMENT.md); реальные значения и секреты не хранить в Git.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Проверки и сборка
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+npm run check
+npm run test:browser
+```
 
-## Learn More
+`check`: типизация, ESLint, Node/Python-тесты, production build. Для браузерных тестов нужен Chromium: `npx playwright install chromium` либо системный браузер. Тесты используют локальное окружение и mock-транспорт; настоящие письма не отправляют. [Подробности](docs/quality-checks.md).
 
-To learn more, take a look at the following resources:
+```sh
+npm run build
+npm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+## Устройство и эксплуатация
 
-<a href="https://v0.app/chat/api/kiro/clone/golkonst77/GOLwebsite-design" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
+- `/api/lead` — общая форма сайта; `/api/lexradar` — отдельная заявка LexRadar.
+- Общий SMTP-сервис: `lib/email-service.ts`, конфигурация: `lib/smtp-config.ts`.
+- Форма LexRadar: `components/lexradar-form.tsx`; допуск к работе: `lib/lexradar-config.ts`.
+- Письмо принимается Mail.ru, рабочий почтовый контакт — golwebstudio@bk.ru.
+- Юридические страницы: `/privacy`, `/lexradar/consent`.
+
+[Развёртывание и восстановление](docs/DEPLOYMENT.md), [почта и данные заявки](docs/EMAIL_AND_LEADS.md), [диагностика](docs/TROUBLESHOOTING.md), [SMTP и безопасное включение](docs/lexradar-mailru-production.md).
+
+Владелец подтвердил реальное получение заявки из production-формы 17 октября 2026 года. Это подтверждение владельца, а не повторная отправка из CI. SHA серверных исходников пока не сверён с GitHub. Контрольная ветка `snapshot/lexradar-working-2026-10-17` сохраняет GitHub-код и запись проверки, но не файлы сервера.
+
+## Версии и публикация
+
+Версия берётся из `package.json`; lockfile и CHANGELOG обновляются вместе. [Порядок выпуска](docs/RELEASING.md). Релиз кода не означает автоматическую установку на VPS. Существующие интеграции Vercel/v0 могут реагировать на GitHub; их настройки этим выпуском не меняются.

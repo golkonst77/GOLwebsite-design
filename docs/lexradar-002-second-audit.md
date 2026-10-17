@@ -1,3 +1,5 @@
+> **АРХИВ: исторический отчёт этапа.** Не инструкция для текущего production. Актуальны [индекс документации](README.md), [Mail.ru](lexradar-mailru-production.md) и [статус](PROJECT_STATUS.md). Указанные ниже проверки, ограничения и настройки относятся к прежнему коммиту; команды Яндекса/pnpm/старого отката не применять.
+
 # Повторная самостоятельная ревизия
 
 17.10.2026, после этапа `e954171`, до финальных проверок. Сначала повторно выполнены unit tests/typecheck/lint. Затем пересмотрены handler, transport, cookie lifecycle, mobile keyboard, payload/consent/UTM и regression scope.

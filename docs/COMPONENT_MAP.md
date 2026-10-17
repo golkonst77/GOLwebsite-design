@@ -435,7 +435,7 @@ Footer (+ BuildVersion)
 
 | | |
 |---|---|
-| **Назначение** | Server-only: `v1.2.0 · build <hash>` |
+| **Назначение** | Server-only: `v1.3.1 · build <hash>` |
 | **Источник** | `lib/build-info.ts` + `package.json` |
 
 ---
@@ -466,8 +466,8 @@ Footer (+ BuildVersion)
 
 | | |
 |---|---|
-| **Роль** | nodemailer → Yandex SMTP |
-| **Production host** | IPv6 `2a02:6b8::19d` + `tls.servername: smtp.yandex.ru` |
+| **Роль** | nodemailer → Mail.ru SMTP |
+| **SMTP конфигурация** | `lib/smtp-config.ts`; имена переменных — [ENVIRONMENT](ENVIRONMENT.md), реальные значения только на сервере |
 
 **Не менять без теста на VPS:** SMTP host/TLS (см. [EMAIL_AND_LEADS.md](./EMAIL_AND_LEADS.md)).
 
@@ -490,7 +490,7 @@ Footer (+ BuildVersion)
   lib/email-service.ts
        │ SMTP :587 (IPv6)
        ▼
-  Yandex → LEAD_TO_EMAIL
+  Mail.ru → получатель из getLeadRecipient()
 
 [Build / version]
   package.json (version)
@@ -527,3 +527,7 @@ shadcn/Radix primitives — **не используются** на основн�
 - [UI_GUIDELINES.md](./UI_GUIDELINES.md)
 - [CONTENT_STRATEGY.md](./CONTENT_STRATEGY.md)
 - [EMAIL_AND_LEADS.md](./EMAIL_AND_LEADS.md)
+
+## LexRadar
+
+Отдельные форма и маршрут `/api/lexradar`, schema/handler/config в `lib/lexradar-*`. Общий email-service используется обеими формами. Текущий путь заявки и ограничения: [EMAIL_AND_LEADS](EMAIL_AND_LEADS.md).
