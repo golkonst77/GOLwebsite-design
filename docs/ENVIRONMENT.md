@@ -1,146 +1,39 @@
 # Переменные окружения
 
-Конфигурация почты и заявок через файл `.env.local`. **Файл не коммитится в Git.**
+Актуальная инструкция запуска LexRadar: [SMTP, proxy и включение](./lexradar-smtp-launch-checklist.md).
 
----
+Файл .env.local не коммитится. На сервере хранить с правами 600, либо использовать secret environment службы. Next.js загружает файл при dev/build/start, диагностическая команда — через @next/env.
 
-## Где используется
+| Переменная | Назначение |
+|---|---|
+| SMTP_HOST | DNS-имя SMTP, для production smtp.yandex.ru |
+| SMTP_PORT | 465 для TLS или 587 для STARTTLS, по умолчанию 587 |
+| SMTP_SECURE | true на 465, false для обязательного STARTTLS; по умолчанию определяется по порту |
+| SMTP_USER | golkonst@yandex.ru |
+| SMTP_PASS | Пароль приложения Яндекса; SMTP_PASSWORD — совместимое прежнее имя |
+| SMTP_FROM | Разрешённый адрес отправителя; по умолчанию SMTP_USER |
+| MAIL_TO / LEAD_TO_EMAIL | golwebstudio@mail.ru; этот же адрес используется, если переменная не задана |
 
-| Окружение | Путь к файлу |
-|-----------|----------------|
-| Локально (Windows) | `D:\DATA\GolWEBStudio\.env.local` |
-| Production (VPS) | `/var/www/golwebstudio/.env.local` |
+SMTP_HOST, SMTP_USER и SMTP_PASS (или SMTP_PASSWORD) необходимы для универсальной конфигурации. SMTP_FROM необходим, если логин не является email. В production указать golkonst@yandex.ru. Конфликт значений SMTP_PASS/SMTP_PASSWORD или MAIL_TO/LEAD_TO_EMAIL блокирует отправку. Указание любой SMTP_* включает универсальный режим; старые секреты Яндекса в нём не используются.
 
-Шаблон без секретов: `.env.example` в корне репозитория.
+Для сохранения старой конфигурации можно оставить только YANDEX_EMAIL / YANDEX_PASSWORD и полностью удалить все SMTP_* из файла и окружения процесса. Тогда сохраняется прежний транспорт IPv6 Yandex с проверкой сертификата.
 
----
+Для формы дополнительно нужны LEXRADAR_SITE_ORIGIN и LEXRADAR_ABUSE_MODE. В edge-режиме требуются LEXRADAR_TRUST_PROXY=true, LEXRADAR_CLIENT_IP_HEADER и LEXRADAR_EDGE_RATE_LIMIT_CONFIRMED=true после проверки proxy/общего лимита. Подробности — в инструкции запуска.
 
-## Обязательные переменные
+LEXRADAR_FORM_ENABLED=false остаётся до реального SMTP-теста и проверки получения письма. Наличие реквизитов само по себе форму не включает.
 
-| Переменная | Обязательна | Описание |
-|------------|-------------|----------|
-| `YANDEX_EMAIL` | да | Логин почтового ящика Yandex (отправитель SMTP). Пример формата: `your-mail@yandex.ru` |
-| `YANDEX_PASSWORD` | да | Пароль приложения Yandex (не основной пароль аккаунта). |
-| `LEAD_TO_EMAIL` | нет* | Куда приходят заявки с сайта. По умолчанию: `golwebstudio@mail.ru` |
+Настройка на VPS:
 
-\* Если не задана — API использует fallback `golwebstudio@mail.ru`.
-
-### Пример `.env.example` (без значений)
-
-```env
-YANDEX_EMAIL=
-YANDEX_PASSWORD=
-LEAD_TO_EMAIL=golwebstudio@mail.ru
-```
-
-### Как заполнить локально
-
-```powershell
-cd D:\DATA\GolWEBStudio
-copy .env.example .env.local
-# Отредактировать .env.local в редакторе — вставить реальные значения
-```
-
-После изменения `.env.local` перезапустить dev:
-
-```powershell
-# остановить npm run dev (Ctrl+C), затем:
-npm run dev
-```
-
----
-
-## Кто читает переменные
-
-| Переменная | Файл |
-|------------|------|
-| `YANDEX_EMAIL`, `YANDEX_PASSWORD` | `lib/email-service.ts` |
-| `LEAD_TO_EMAIL` | `app/api/lead/route.ts` |
-
-Next.js подхватывает `.env.local` автоматически при `dev` / `build` / `start`.
-
----
-
-## Production: создание и права
-
-На сервере:
-
-```bash
+```sh
 cd /var/www/golwebstudio
-nano .env.local
-```
-
-Права (только владелец читает):
-
-```bash
+# Заполнить .env.local через редактор, не вставлять пароль в командную строку.
 chmod 600 .env.local
+npm run smtp:diagnose
+npm run smtp:diagnose -- --verify
+# Отправляет одно настоящее синтетическое письмо; проверить ящик вручную.
+npm run smtp:diagnose -- --production-test
 ```
 
----
+После изменения настроек перезапустить службу штатно, например pm2 restart golwebstudio --update-env. Убедиться, что старые переменные процесса не перекрывают .env.local. Для Vercel использовать Environment Variables нужного окружения и новый deployment.
 
-## Проверка наличия переменных **без вывода секретов**
-
-### На сервере — ключи заданы и не пустые
-
-```bash
-cd /var/www/golwebstudio
-grep -E '^[A-Z_]+=' .env.local | cut -d= -f1 | sort
-```
-
-Ожидаемые имена: `LEAD_TO_EMAIL`, `YANDEX_EMAIL`, `YANDEX_PASSWORD`.
-
-### Проверка, что значения не пустые (без показа)
-
-```bash
-cd /var/www/golwebstudio
-for v in YANDEX_EMAIL YANDEX_PASSWORD LEAD_TO_EMAIL; do
-  if grep -q "^${v}=.\+" .env.local 2>/dev/null; then
-    echo "$v=SET"
-  else
-    echo "$v=MISSING_OR_EMPTY"
-  fi
-done
-```
-
-### Через Node (только факт наличия)
-
-```bash
-cd /var/www/golwebstudio
-node -e "const k=['YANDEX_EMAIL','YANDEX_PASSWORD','LEAD_TO_EMAIL']; k.forEach(x=>console.log(x, process.env[x]?'SET':'MISSING'))"
-```
-
-> Для `process.env` из файла Next подхватывает env при старте через PM2. Надёжнее смотреть `.env.local` grep-ом, затем перезапустить PM2.
-
----
-
-## Перезапуск PM2 с новыми env
-
-После правки `.env.local` на сервере:
-
-```bash
-pm2 restart golwebstudio --update-env
-pm2 logs golwebstudio --lines 30
-```
-
-Флаг `--update-env` обязателен, иначе PM2 может держать старые переменные окружения.
-
----
-
-## Безопасность
-
-- **Не** вставлять пароли в `docs/`, GitHub Issues, чаты.
-- **Не** коммитить `.env.local`.
-- Использовать **пароль приложения** Yandex, не пароль от входа в почту.
-- Ротация пароля: обновить `.env.local` → `pm2 restart golwebstudio --update-env`.
-
----
-
-## Типичные ошибки
-
-| Симптом | Причина |
-|---------|---------|
-| `EMAIL_NOT_CONFIGURED` в логах | пустые `YANDEX_EMAIL` / `YANDEX_PASSWORD` |
-| `SEND_FAILED` на API | SMTP или неверный пароль приложения |
-| env не обновился | не сделали `--update-env` при restart PM2 |
-
-См. [TROUBLESHOOTING.md](./TROUBLESHOOTING.md), [EMAIL_AND_LEADS.md](./EMAIL_AND_LEADS.md).
+Не использовать NEXT_PUBLIC_* для почты. Не включать SMTP debug, не публиковать .env, пароли и сырые ответы SMTP. Диагностика выводит безопасные статусы/коды, источники и дубликаты. Полная инструкция одной команды и разбора EAUTH: [Яндекс SMTP](./lexradar-yandex-production.md).

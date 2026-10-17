@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getLexradarConfig, type LexradarConfig } from "./lexradar-config";
 import { lexradarSchema } from "./lexradar-validation";
 import { sendEmail } from "./email-service";
+import { getLeadRecipient } from "./smtp-config";
 
 type Outcome = { status: number; code: string; ok: boolean };
 type Delivery = { hash: string; until: number; result: Promise<Outcome> };
@@ -130,6 +131,8 @@ export function createLexradarHandler({
       );
     if (deliveries.size >= 5000) return response(result(503, "UNAVAILABLE"));
     const deliver = async (): Promise<Outcome> => {
+      const recipient = getLeadRecipient();
+      if (!recipient) return result(503, "UNAVAILABLE");
       const { site, name, email, phone, comment, utm } = data;
       const text = [
         "LexRadar — бесплатная предварительная проверка",
@@ -146,7 +149,7 @@ export function createLexradarHandler({
       const html = `<pre>${text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")}</pre>`;
       try {
         const sent = await send({
-          to: process.env.LEAD_TO_EMAIL?.trim() || "golwebstudio@mail.ru",
+          to: recipient,
           subject: "[GØL] LexRadar — заявка на проверку",
           text,
           html,
