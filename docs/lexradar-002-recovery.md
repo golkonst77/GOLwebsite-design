@@ -1,3 +1,5 @@
+> **АРХИВ: исторический отчёт этапа.** Не инструкция для текущего production. Актуальны [индекс документации](README.md), [Mail.ru](lexradar-mailru-production.md) и [статус](PROJECT_STATUS.md). Указанные ниже проверки, ограничения и настройки относятся к прежнему коммиту; команды Яндекса/pnpm/старого отката не применять.
+
 # Восстановление GØL–LEXRADAR–002
 
 Исходный PR #2: https://github.com/golkonst77/GOLwebsite-design/pull/2.

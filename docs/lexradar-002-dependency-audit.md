@@ -1,3 +1,5 @@
+> **АРХИВ: исторический отчёт этапа.** Не инструкция для текущего production. Актуальны [индекс документации](README.md), [Mail.ru](lexradar-mailru-production.md) и [статус](PROJECT_STATUS.md). Указанные ниже проверки, ограничения и настройки относятся к прежнему коммиту; команды Яндекса/pnpm/старого отката не применять.
+
 # Проверка зависимостей
 
 17.10.2026. Read-only `npm audit --omit=dev --json` после clean install выявил 8 затронутых пакетов: critical Next, high Nodemailer/PostCSS/sharp/browserslist/nanoid/source-map-js и moderate baseline-browser-mapping. Это сведения npm advisory по версиям, а не доказательство эксплуатации каждого состава в этом приложении.

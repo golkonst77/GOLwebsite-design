@@ -1,199 +1,51 @@
-# Troubleshooting
+# Диагностика
 
-Частые проблемы production и локальной разработки GØL Web Studio.
+Не публиковать env-файлы, pm2 env/jlist/dump, сырые SMTP-ответы, пароли или данные заявок. Не менять пароль и не отключать TLS/антиспам для выяснения причины.
 
----
+## Поля LexRadar заблокированы
 
-## Форма показывает красную ошибку
+Это серверный допуск `config.enabled && config.ready`, а не обязательно проблема CSS/браузера. Страница force-dynamic.
 
-### «Не получилось отправить форму…»
+Из каталога приложения с Node 24 в PATH выполнить локальную проверку без SMTP-соединений:
 
-1. Открыть DevTools → Network → запрос `POST /api/lead`.
-2. Смотреть **HTTP status** и JSON:
-   - `500` + `SEND_FAILED` → SMTP / env (ниже).
-   - `400` + `INVALID_PHONE` → неверный телефон.
-   - `429` → rate limit (подождать 10 мин или другой IP).
-3. Логи сервера: `pm2 logs golwebstudio`.
-
-### «Введите телефон в формате +7…»
-
-- Нужно 11 цифр с кодом страны `7`.
-- Примеры валидных вводов: `89203336655`, `9203336655`.
-
----
-
-## `curl /api/lead` → `SEND_FAILED`
-
-| Причина | Действие |
-|---------|----------|
-| Пустой `YANDEX_EMAIL` / `YANDEX_PASSWORD` | проверить `.env.local`, см. [ENVIRONMENT.md](./ENVIRONMENT.md) |
-| Неверный пароль приложения | создать новый в Yandex ID |
-| SMTP timeout (IPv4) | на VPS должен быть host `2a02:6b8::19d` в `email-service.ts` |
-| PM2 старый env | `pm2 restart golwebstudio --update-env` |
-
-Проверка SMTP: [EMAIL_AND_LEADS.md](./EMAIL_AND_LEADS.md).
-
----
-
-## `.env.local` не подхватился
-
-**Локально:** перезапустить `npm run dev` после изменения файла.
-
-**На сервере:**
-
-```bash
-ls -la /var/www/golwebstudio/.env.local
-pm2 restart golwebstudio --update-env
+```sh
+node -r tsx/cjs <<'NODE'
+try {
+  let failed = false;
+  require('@next/env').loadEnvConfig(process.cwd(), false, {
+    info() {}, error() { failed = true; }
+  });
+  if (failed) throw new Error();
+  const c = require('./lib/lexradar-config.ts').getLexradarConfig();
+  console.log('FORM_ENABLED=' + c.enabled);
+  console.log('FORM_READY=' + c.ready);
+  console.log('ORIGIN_VALID=' + Boolean(c.origin));
+  console.log('ABUSE_MODE_VALID=' + Boolean(c.abuseMode));
+} catch {
+  console.log('CHECK_FAILED');
+  process.exitCode = 2;
+}
+NODE
 ```
 
-Проверка ключей без секретов:
+- enabled=false, ready=true: проверить единственное определение LEXRADAR_FORM_ENABLED. Нужно ровно строчное true; TRUE не подходит. Сохранить файл в редакторе. Присваивание в shell само по себе не сохраняется в файл.
+- ready=false: проверить origin, SMTP-конфигурацию и режим защиты по ENVIRONMENT. В edge нужны все три условия доверенного proxy, заголовка и реального ingress-limit.
+- ORIGIN_VALID=true означает лишь синтаксическую допустимость; домен дополнительно должен совпадать с адресом страницы в браузере.
+- Всё корректно в отдельной команде, но форма закрыта: сверить каталог/коммит запущенного приложения и источники окружения PM2. Они могут перекрыть файл. Не выводить окружение целиком. Штатный restart после разрешения применяет файл при запуске Next, но --update-env не удаляет все старые ключи автоматически.
 
-```bash
-cd /var/www/golwebstudio
-for v in YANDEX_EMAIL YANDEX_PASSWORD LEAD_TO_EMAIL; do
-  grep -q "^${v}=.\+" .env.local && echo "$v=SET" || echo "$v=EMPTY"
-done
-```
+После изменения только серверного флага повторная сборка динамической страницы не нужна; после изменения версии или исходников build необходим. Действия на сервере — только с разрешения.
 
----
+## Ошибки отправки
 
-## PM2 не видит новые env
+- ORIGIN: LEXRADAR_SITE_ORIGIN должен совпадать с origin браузера (включая www), без /lexradar.
+- CLIENT_ADDRESS: proxy не передал корректный одиночный IP в доверенном заголовке. Не доверять произвольному заголовку посетителя.
+- RATE_LIMIT: подождать окно ограничения; при shared bucket его делят посетители. Не обходить лимит сменой IP и не отключать защиту.
+- EAUTH/535: SMTP отклонил авторизацию. Без вывода значений проверить источник настроек, aliases, дубликаты и сохранение пароля загрузчиком. Не заменять пароль наугад.
+- CONNECTION/TLS ошибки: проверить разрешённый сетевой путь и сертификат; не отключать rejectUnauthorized.
+- DELIVERY_UNCONFIRMED: не считать успехом; проверить ящик прежде, чем создавать новую заявку, чтобы избежать дубликатов.
 
-```bash
-pm2 restart golwebstudio --update-env
-```
+`npm run smtp:diagnose` — конфигурация без сети. Другие режимы описаны в [Mail.ru](lexradar-mailru-production.md) и требуют явной необходимости; production-test отправляет письмо.
 
-Без `--update-env` переменные из обновлённого `.env.local` могут не примениться.
+## Старая версия / 502
 
----
-
-## SMTP timeout
-
-### Симптом
-
-Логи / API: `SEND_FAILED`, `connection timeout`, `ETIMEDOUT`.
-
-### Диагностика
-
-```bash
-# IPv4 — на этом VPS часто не работает
-nc -vz smtp.yandex.ru 587
-
-# IPv6 — должен быть open
-nc -6 -vz 2a02:6b8::19d 587
-```
-
-### Решение
-
-Убедиться в `lib/email-service.ts`:
-
-- `host: '2a02:6b8::19d'`
-- `tls: { servername: 'smtp.yandex.ru' }`
-- **нет** `rejectUnauthorized: false`
-
-После правки: `pnpm build` + `pm2 restart golwebstudio --update-env`.
-
----
-
-## `Failed to find Server Action "x"`
-
-### Причина
-
-- Старый JS-бандл в браузере или кэш после деплоя;
-- раньше форма использовала Server Actions — сейчас только `fetch('/api/lead')`.
-
-### Решение
-
-1. На сервере полная пересборка:
-
-```bash
-cd /var/www/golwebstudio
-rm -rf .next
-pnpm build
-pm2 restart golwebstudio --update-env
-```
-
-2. В браузере: жёсткое обновление `Ctrl+Shift+R` или инкогнито.
-
-3. Убедиться, что в репозитории нет `'use server'` для lead (форма в `lead-form.tsx` — `'use client'`).
-
----
-
-## Старый UI / старая версия в футере после деплоя
-
-1. Проверить коммит на сервере: `cd /var/www/golwebstudio && git log -1 --oneline`
-2. Удалить `.next`, пересобрать (см. выше).
-3. Nginx не кэширует HTML агрессивно — проверить заголовки `Cache-Control` при необходимости.
-
----
-
-## `npm` / `pnpm install` проблемы
-
-### Локально (Windows)
-
-```powershell
-cd D:\DATA\GolWEBStudio
-Remove-Item -Recurse -Force node_modules
-Remove-Item package-lock.json -ErrorAction SilentlyContinue
-npm install
-```
-
-При SSL-ошибках registry — проверить сеть/прокси (не отключать `strict-ssl` в production CI без необходимости).
-
-### На сервере
-
-```bash
-cd /var/www/golwebstudio
-rm -rf node_modules
-pnpm install
-pnpm build
-```
-
----
-
-## PM2 logs
-
-```bash
-pm2 logs golwebstudio
-pm2 logs golwebstudio --lines 200
-pm2 logs golwebstudio --err
-```
-
-Очистить старые логи (осторожно):
-
-```bash
-pm2 flush golwebstudio
-```
-
----
-
-## Nginx 502 / Bad Gateway
-
-```bash
-pm2 list
-curl -I http://127.0.0.1:3000
-nginx -t
-systemctl status nginx
-```
-
-Часто Node не запущен или упал после failed build.
-
----
-
-## Проверка портов SMTP (шпаргалка)
-
-```bash
-nc -vz smtp.yandex.ru 587
-nc -6 -vz smtp.yandex.ru 587
-nc -6 -vz 2a02:6b8::19d 587
-```
-
----
-
-## Куда смотреть дальше
-
-| Тема | Документ |
-|------|----------|
-| Деплой | [DEPLOYMENT.md](./DEPLOYMENT.md) |
-| Env | [ENVIRONMENT.md](./ENVIRONMENT.md) |
-| Почта | [EMAIL_AND_LEADS.md](./EMAIL_AND_LEADS.md) |
+Проверить SHA/имена локальных изменений по DEPLOYMENT, статус PM2 и ответ локального HTTP. Не удалять lockfile, не запускать git reset --hard или git clean. Сначала сохранить изменённые исходники и подготовить план отката. Нужны Node 24, npm ci и согласованный package-lock. Перестройка/рестарт/Nginx — только после разрешения; не применять старый BAT-деплой.
