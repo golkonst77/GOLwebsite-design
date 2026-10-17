@@ -11,7 +11,8 @@
     "test": "node --import tsx --test tests/*.test.ts",
     "test:browser": "playwright test",
     "check": "npm run typecheck && npm run lint && npm test && npm run build",
-    "smtp:diagnose": "node --import tsx scripts/diagnose-smtp.ts"
+    "smtp:diagnose": "node --import tsx scripts/diagnose-smtp.ts",
+    "smtp:auth": "node scripts/diagnose-yandex-auth.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
