@@ -47,7 +47,8 @@ for (const [width, height] of sizes)
       expect(box).toBeTruthy();
       expect(box!.x).toBeGreaterThanOrEqual(0);
       expect(box!.x + box!.width).toBeLessThanOrEqual(width + 1);
-    if (width <= 390) expect(box!.y + box!.height).toBeLessThanOrEqual(height);
+      if (width <= 390)
+        expect(box!.y + box!.height).toBeLessThanOrEqual(height);
     }
     await page.screenshot({
       path: `${screenshots}/lexradar-${width}-hero.png`,
@@ -334,4 +335,21 @@ test("blocked localStorage still lets visitor close cookie banner", async ({
     page.getByRole("dialog", { name: "Настройки cookies" }),
   ).toHaveCount(0);
   expect(errors).toEqual([]);
+});
+
+test("mobile drawer releases scrolling after desktop resize", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await dismissCookies(page);
+  await page.getByRole("button", { name: "Открыть меню" }).click();
+  await expect
+    .poll(() => page.evaluate(() => document.body.style.overflow))
+    .toBe("hidden");
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await expect
+    .poll(() => page.evaluate(() => document.body.style.overflow))
+    .toBe("");
+  await expect(page.locator("#mobile-navigation")).toHaveAttribute("inert", "");
 });

@@ -26,3 +26,7 @@
 - Политика, consent version и payload перечисляют фактические поля; оператор взят из существующего подтверждённого текста. Неподтверждённые санкции не возвращены.
 
 После этого commit повторяются clean npm ci, check, browser/axe, Lighthouse и проверка Git refs. Окончательные результаты и ограничения — `lexradar-002-final-report.md`; этот документ не подменяет их прогнозом.
+
+## Дополнительная проверка dependency advisories
+
+Read-only npm audit выявил ранее не проверенные advisories исходных runtime dependencies. Выполнены адресные обновления Next в пределах major 16, Nodemailer и затронутых совместимых transitives; основания/версии и остающаяся dev-only цепочка описаны в `lexradar-002-dependency-audit.md`. Это отдельный исправляющий commit с последующим полным повтором проверок. Дополнительно устранён обнаруженный при review resize случай drawer: при переходе mobile→desktop закрывается меню и освобождается body scroll; добавлен браузерный regression. Телефон допускает плюс только в начале строки.

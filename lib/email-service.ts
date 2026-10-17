@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import nodemailer, { type SendMailOptions } from "nodemailer";
 
 export type EmailInput = {
   to: string;
@@ -24,7 +24,7 @@ type Receipt = {
   messageId?: string;
 };
 export type MailTransport = {
-  sendMail: (options: nodemailer.SendMailOptions) => Promise<Receipt>;
+  sendMail: (options: SendMailOptions) => Promise<Receipt>;
   close: () => void;
 };
 

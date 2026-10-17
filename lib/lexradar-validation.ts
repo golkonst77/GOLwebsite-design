@@ -31,7 +31,7 @@ export const lexradarSchema = z.object({
       z
         .string()
         .max(30)
-        .regex(/^[+\d ()\-]*$/),
+        .regex(/^\+?[\d ()\-]*$/),
     )
     .refine((value) => !value || /^\d{7,15}$/.test(value.replace(/\D/g, "")))
     .optional()

@@ -113,6 +113,7 @@ for (const [label, patch] of Object.entries({
   "consent string": { consent: "true" },
   "stale consent": { consentVersion: "old" },
   "phone symbols": { phone: "++-" },
+  "phone misplaced plus": { phone: "12+34567" },
   "short phone": { phone: "123" },
   "long comment": { comment: "x".repeat(2001) },
   "bad UTM": { utm: { utm_campaign: "a\r\nspoof" } },

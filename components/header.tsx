@@ -14,6 +14,11 @@ export default function Header({ isScrolled }: HeaderProps) {
   const menuPanel = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!isMenuOpen) return;
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches) setIsMenuOpen(false);
+    };
+    desktop.addEventListener("change", closeOnDesktop);
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const handleKey = (event: KeyboardEvent) => {
@@ -38,6 +43,7 @@ export default function Header({ isScrolled }: HeaderProps) {
     };
     document.addEventListener("keydown", handleKey);
     return () => {
+      desktop.removeEventListener("change", closeOnDesktop);
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", handleKey);
     };
