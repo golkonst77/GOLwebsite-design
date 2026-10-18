@@ -8,6 +8,7 @@
 | [DEPLOYMENT](DEPLOYMENT.md) | Безопасная сверка, развёртывание и восстановление |
 | [ENVIRONMENT](ENVIRONMENT.md) | Имена переменных и условия ready/enabled |
 | [Mail.ru production](lexradar-mailru-production.md) | Настройка SMTP, проверка и включение |
+| [Telegram notifications](TELEGRAM_NOTIFICATIONS.md) | Необязательное уведомление владельцу после SMTP, безопасная настройка |
 | [EMAIL_AND_LEADS](EMAIL_AND_LEADS.md) | Форма → API → письмо, ограничения |
 | [TROUBLESHOOTING](TROUBLESHOOTING.md) | Закрытая форма, Origin, SMTP, PM2 |
 | [Quality checks](quality-checks.md) | Проверки без настоящих писем |

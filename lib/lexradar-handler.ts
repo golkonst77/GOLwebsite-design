@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getLexradarConfig, type LexradarConfig } from "./lexradar-config";
 import { lexradarSchema } from "./lexradar-validation";
 import { sendEmail } from "./email-service";
+import { notifyAcceptedLead } from "./telegram-notifications";
 import { getLeadRecipient } from "./smtp-config";
 
 type Outcome = { status: number; code: string; ok: boolean };
@@ -31,11 +32,13 @@ const result = (status: number, code: string): Outcome => ({
 // The factory lets tests exercise the actual handler with a mock transport, not a rewritten API.
 export function createLexradarHandler({
   send = sendEmail,
+  notify = notifyAcceptedLead,
   config = getLexradarConfig,
   now = Date.now,
   readTimeout = 10000,
 }: {
   send?: typeof sendEmail;
+  notify?: typeof notifyAcceptedLead;
   config?: () => LexradarConfig;
   now?: () => number;
   readTimeout?: number;
@@ -155,6 +158,10 @@ export function createLexradarHandler({
           html,
           replyTo: email,
         });
+        if (sent.success && !sent.uncertain) {
+          try { await notify({ form: "lexradar", requestId }); }
+          catch { /* Notification failure must not change accepted email or API response. */ }
+        }
         return sent.success
           ? result(200, "ACCEPTED")
           : result(

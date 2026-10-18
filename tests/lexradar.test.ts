@@ -47,6 +47,7 @@ function fixture(
 ) {
   const mails: EmailInput[] = [];
   const handler = createLexradarHandler({
+    notify: async () => "DISABLED",
     config: () => options.config || settings,
     now: options.now,
     readTimeout: options.readTimeout,
