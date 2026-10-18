@@ -38,6 +38,8 @@ npm start
 - Письмо принимается Mail.ru, рабочий почтовый контакт — golwebstudio@bk.ru.
 - Юридические страницы: `/privacy`, `/lexradar/consent`.
 
+[Telegram-уведомления: настройка позже, по умолчанию выключены](docs/TELEGRAM_NOTIFICATIONS.md).
+
 [Развёртывание и восстановление](docs/DEPLOYMENT.md), [почта и данные заявки](docs/EMAIL_AND_LEADS.md), [диагностика](docs/TROUBLESHOOTING.md), [SMTP и безопасное включение](docs/lexradar-mailru-production.md).
 
 Владелец подтвердил реальное получение заявки из production-формы 17 октября 2026 года. Это подтверждение владельца, а не повторная отправка из CI. SHA серверных исходников пока не сверён с GitHub. Контрольная ветка `snapshot/lexradar-working-2026-10-17` сохраняет GitHub-код и запись проверки, но не файлы сервера.

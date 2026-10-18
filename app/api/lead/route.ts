@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendEmail } from '@/lib/email-service'
+import { sendLeadEmail } from '@/lib/lead-delivery'
 import { getLeadRecipient } from '@/lib/smtp-config'
 
 const EMPTY_MESSAGE_FALLBACK = 'Клиент не оставил описание задачи'
@@ -312,7 +312,7 @@ export async function POST(request: NextRequest) {
     const text = buildLeadEmailText({ name, contact, message, sentAt, consentAt })
 
     // 7. Письмо админу
-    const adminResult = await sendEmail({
+    const adminResult = await sendLeadEmail({
       to,
       subject,
       html,
