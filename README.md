@@ -38,7 +38,7 @@ npm start
 - Письмо принимается Mail.ru, рабочий почтовый контакт — golwebstudio@bk.ru.
 - Юридические страницы: `/privacy`, `/lexradar/consent`.
 
-[Telegram-уведомления: настройка позже, по умолчанию выключены](docs/TELEGRAM_NOTIFICATIONS.md).
+[Telegram-уведомления LexRadar: скрытый ввод токена и проверка готовности формы](docs/TELEGRAM_NOTIFICATIONS.md).
 
 [Развёртывание и восстановление](docs/DEPLOYMENT.md), [почта и данные заявки](docs/EMAIL_AND_LEADS.md), [диагностика](docs/TROUBLESHOOTING.md), [SMTP и безопасное включение](docs/lexradar-mailru-production.md).
 

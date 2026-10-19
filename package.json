@@ -14,7 +14,8 @@
     "smtp:diagnose": "node --import tsx scripts/diagnose-smtp.ts",
     "smtp:setup": "python3 -B scripts/setup-mailru-smtp.py",
     "telegram:setup": "python3 -B scripts/setup-telegram.py",
-    "telegram:inspect": "node --import tsx scripts/telegram-notifications.ts"
+    "telegram:inspect": "node --import tsx scripts/telegram-notifications.ts",
+    "lexradar:inspect": "node --import tsx scripts/inspect-lexradar.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

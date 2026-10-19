@@ -171,7 +171,7 @@ class TelegramSetupTests(unittest.TestCase):
         for name in ["lib/telegram-notifications.ts", "scripts/telegram-notifications.ts"]:
             (self.root / name).touch()
         original_run = subprocess.run
-        for permission, received, accepted in [("", "", True), ("ОТПРАВИТЬ", "", True), ("ОТПРАВИТЬ", "ПОЛУЧЕНО", True), ("ОТПРАВИТЬ", "", False)]:
+        for chat_input, permission, received, accepted in [(CHAT, "", "", True), (CHAT, "ОТПРАВИТЬ", "", True), (CHAT, "ОТПРАВИТЬ", "ПОЛУЧЕНО", True), (CHAT, "ОТПРАВИТЬ", "", False), ("", "", "", True)]:
             controls = []
             def run(args, **kwargs):
                 self.assertNotIn(TOKEN, args)
@@ -180,7 +180,7 @@ class TelegramSetupTests(unittest.TestCase):
                     controls.append(args)
                     return subprocess.CompletedProcess(args, 0 if accepted else 1)
                 return original_run(args, **kwargs)
-            answers = iter(["НАСТРОИТЬ", CHAT, permission, received])
+            answers = iter(["НАСТРОИТЬ", chat_input, permission, received])
             output = io.StringIO()
             with patch.object(setup.Path, "cwd", return_value=self.root), patch.object(setup.sys, "argv", ["setup-telegram.py"]), patch.object(setup.sys.stdin, "isatty", return_value=True), patch.object(setup.sys.stderr, "isatty", return_value=True), patch("builtins.input", side_effect=lambda prompt: next(answers)), patch.object(setup.getpass, "getpass", return_value=TOKEN), patch.object(setup.subprocess, "run", side_effect=run), contextlib.redirect_stdout(output):
                 code = setup.main()
@@ -188,6 +188,8 @@ class TelegramSetupTests(unittest.TestCase):
             self.assertEqual(code, 1 if permission and not accepted else 0)
             enabled = permission and received and accepted
             text = (self.root / ".env.local").read_text()
+            expected_chat = chat_input or "241367335"
+            self.assertIn("TELEGRAM_CHAT_ID=" + setup._helpers.encode_password(expected_chat), text)
             self.assertIn("TELEGRAM_NOTIFICATIONS_ENABLED=" + ("true" if enabled else "false"), text)
             self.assertNotIn(TOKEN, output.getvalue())
             self.assertNotIn(CHAT, output.getvalue())

@@ -154,7 +154,7 @@ def main():
         with warnings.catch_warnings():
             warnings.simplefilter("error", getpass.GetPassWarning)
             token = getpass.getpass("Токен бота (ввод скрыт): ", stream=sys.stderr)
-        chat_id = input("Личный chat_id владельца: ").strip()
+        chat_id = input("Личный chat_id владельца [241367335]: ").strip() or "241367335"
         expected = configure(root, token, chat_id)
         del token, chat_id
         print("TELEGRAM_CONFIGURED_NOTIFICATIONS_DISABLED")
