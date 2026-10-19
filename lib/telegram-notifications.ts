@@ -5,6 +5,14 @@ export type TelegramStatus = "DISABLED" | "NOT_CONFIGURED" | "INVALID_EVENT" | "
 export type AcceptedLead = {
     form: "lead" | "lexradar";
     requestId?: string;
+    lexradar?: {
+        name: string;
+        email: string;
+        site: string;
+        phone: string;
+        comment: string;
+        receivedAt: string;
+    };
 };
 const tokenPattern = /^\d{5,20}:[A-Za-z0-9_-]{30,100}$/;
 const chatPattern = /^-?[1-9]\d{0,19}$/;
@@ -36,7 +44,8 @@ export function createTelegramService({ fetcher = fetch, env = () => process.env
                 const response = await fetcher(`https://api.telegram.org/bot${credentials.token}/sendMessage`, {
                     method: "POST", redirect: "error", cache: "no-store",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ chat_id: credentials.chatId, text }),
+                    body: JSON.stringify({ chat_id: credentials.chatId, text,
+                        link_preview_options: { is_disabled: true } }),
                     signal: controller.signal,
                 });
                 if (!response.ok)
@@ -99,6 +108,16 @@ export function createTelegramService({ fetcher = fetch, env = () => process.env
                     const text = [titles[event.form], "Письмо принято почтовым сервером.",
                         "Проверьте рабочую почту.",
                         ...(event.form === "lexradar" && event.requestId ? [`Номер заявки: ${event.requestId}`] : []),
+                        // Explicit allowlist: never serialize the submitted object or email.
+                        // Form limits keep the complete message below Telegram's 4096 characters.
+                        ...(event.form === "lexradar" && event.lexradar ? [
+                            `Имя: ${event.lexradar.name}`,
+                            `Email: ${event.lexradar.email}`,
+                            ...(event.lexradar.phone ? [`Телефон: ${event.lexradar.phone}`] : []),
+                            `Сайт: ${event.lexradar.site}`,
+                            ...(event.lexradar.comment ? [`Комментарий: ${event.lexradar.comment}`] : []),
+                            `Дата поступления (UTC): ${event.lexradar.receivedAt}`,
+                        ] : []),
                     ].join("\n");
                     status = await send(text, c.credentials);
                 }

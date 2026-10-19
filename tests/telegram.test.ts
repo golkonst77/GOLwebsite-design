@@ -47,7 +47,7 @@ test("Telegram posts only fixed text/status and existing UUID to fixed HTTPS end
     const privateFields = { name: "PRIVATE_NAME", email: "PRIVATE_EMAIL", phone: "PRIVATE_PHONE", site: "PRIVATE_URL", ip: "PRIVATE_IP", utm: "PRIVATE_UTM", comment: "PRIVATE_COMMENT" };
     assert.equal(await service.notifyAcceptedLead({ form: "lexradar", requestId: id, ...privateFields }), "ACCEPTED");
     assert.equal(await service.notifyAcceptedLead({ form: "lead", requestId: id, ...privateFields }), "ACCEPTED");
-    assert.deepEqual(Object.keys(posts[0]).sort(), ["chat_id", "text"]);
+    assert.deepEqual(Object.keys(posts[0]).sort(), ["chat_id", "link_preview_options", "text"]);
     assert.equal(posts[0].chat_id, chatId);
     assert.match(posts[0].text, /Новая заявка LexRadar/);
     assert.match(posts[0].text, /Письмо принято почтовым сервером/);

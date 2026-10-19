@@ -12,6 +12,7 @@ import { CONSENT_VERSION } from "../lib/lexradar-constants";
 const require = createRequire(import.meta.url);
 const id = "00000000-0000-4000-8000-000000000002";
 const origin = "https://example.invalid";
+const received = Date.parse("2026-10-19T10:00:00.000Z");
 const settings = { enabled: true, ready: true, origin, abuseMode: "single-process" as const, clientIpHeader: null };
 function request(lex: boolean) {
     return new NextRequest(`http://localhost/api/${lex ? "lexradar" : "lead"}`, { method: "POST", headers: { origin, "content-type": "application/json" }, body: JSON.stringify(lex ? { requestId: id, consentVersion: CONSENT_VERSION, site: "https://site.example.invalid", name: "PRIVATE_NAME", email: "private@example.invalid", consent: true } : { name: "PRIVATE_NAME", contact: "+7 (999) 000-00-00", message: "PRIVATE_COMMENT", consent: true }) });
@@ -45,13 +46,15 @@ for (const lex of [false, true]) {
         const order: string[] = [];
         const events: AcceptedLead[] = [];
         const deps = { send: async () => { mails++; order.push("smtp"); return { success: true }; }, notify: async (event: AcceptedLead) => { order.push("telegram"); events.push(event); throw Error("PRIVATE"); } };
-        const handler = lex ? createLexradarHandler({ ...deps, config: () => settings }) : actualLeadRoute(createLeadEmailSender(deps));
+        const handler = lex ? createLexradarHandler({ ...deps, config: () => settings, now: () => received }) : actualLeadRoute(createLeadEmailSender(deps));
         const res = await handler(request(lex));
         assert.equal(res.status, 200);
         assert.deepEqual(await res.json(), lex ? { ok: true, code: "ACCEPTED" } : { ok: true });
         assert.equal(mails, 1);
         assert.deepEqual(order, ["smtp", "telegram"]);
-        assert.deepEqual(events, lex ? [{ form: "lexradar", requestId: id }] : [{ form: "lead" }]);
+        assert.deepEqual(events, lex ? [{ form: "lexradar", requestId: id,
+            lexradar: { name: "PRIVATE_NAME", email: "private@example.invalid", site: "https://site.example.invalid",
+                phone: "", comment: "", receivedAt: new Date(received).toISOString() } }] : [{ form: "lead" }]);
     });
     test(`${lex ? "LexRadar" : "general"} Telegram timeout never resends mail`, async () => {
         let mails = 0, posts = 0;

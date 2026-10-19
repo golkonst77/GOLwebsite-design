@@ -137,6 +137,7 @@ export function createLexradarHandler({
       const recipient = getLeadRecipient();
       if (!recipient) return result(503, "UNAVAILABLE");
       const { site, name, email, phone, comment, utm } = data;
+      const receivedAt = new Date(time).toISOString();
       const text = [
         "LexRadar — бесплатная предварительная проверка",
         `Идентификатор заявки: ${requestId}`,
@@ -147,7 +148,7 @@ export function createLexradarHandler({
         `Комментарий: ${comment || "не указан"}`,
         `UTM: ${JSON.stringify(utm || {})}`,
         `Согласие: ${CONSENT_VERSION}`,
-        `Дата согласия и заявки: ${new Date(now()).toISOString()}`,
+        `Дата согласия и заявки: ${receivedAt}`,
       ].join("\n");
       const html = `<pre>${text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")}</pre>`;
       try {
@@ -159,7 +160,8 @@ export function createLexradarHandler({
           replyTo: email,
         });
         if (sent.success && !sent.uncertain) {
-          try { await notify({ form: "lexradar", requestId }); }
+          try { await notify({ form: "lexradar", requestId,
+            lexradar: { name, email, phone, site, comment, receivedAt } }); }
           catch { /* Notification failure must not change accepted email or API response. */ }
         }
         return sent.success
