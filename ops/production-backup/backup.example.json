@@ -1,0 +1,14 @@
+{
+  "ServerAddress": "<SSH_USER>@<SSH_HOST>",
+  "KeyPath": "<LOCAL_SSH_KEY_PATH>",
+  "AppDirectory": "<ABSOLUTE_APP_PATH>",
+  "AppName": "<PM2_APP_NAME>",
+  "Domains": ["<SITE_DOMAIN>"],
+  "ExpectedCommit": "<FULL_40_CHARACTER_COMMIT_SHA>",
+  "RemoteBackupDirectory": "<PRIVATE_REMOTE_BACKUP_DIRECTORY>",
+  "RemoteWorkDirectory": "<EXISTING_PRIVATE_REMOTE_WORK_PARENT>",
+  "Pm2Home": "<EXISTING_PM2_HOME>",
+  "NginxDirectory": "<NGINX_CONFIG_DIRECTORY>",
+  "NodeBinDirectory": "<NODE_BINARY_DIRECTORY>",
+  "AdditionalNginxIncludes": []
+}
