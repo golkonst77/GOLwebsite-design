@@ -5,6 +5,7 @@ import getpass
 import glob
 import hashlib
 import io
+import ipaddress
 import json
 import os
 from pathlib import Path
@@ -29,6 +30,7 @@ NGINX = None
 PM2_HOME = None
 RUN_DIRECTORY = None
 EXTRA_INCLUDES = set()
+TARGET_IP = None
 ENV_FILES = (".env.production.local", ".env.local", ".env.production", ".env")
 MAX_FILE = 4 * 1024 * 1024
 MAX_TOTAL = 32 * 1024 * 1024
@@ -161,25 +163,61 @@ def tokens(text):
     return result
 
 
-def directives(text, name):
+def directives(text, name, at_depth=None):
+    # Match directive positions, never argument values. Track block context.
     parts = tokens(text)
     values = []
-    for i, (value, _, _) in enumerate(parts):
-        if value != name:
+    i = depth = 0
+    while i < len(parts):
+        atom = parts[i][0]
+        if atom == "}":
+            depth -= 1
+            require(depth >= 0, "NGINX_PARSE_REVIEW")
+            i += 1
             continue
+        if atom == ";":
+            i += 1
+            continue
+        keyword = atom
         args = []
-        for atom, _, _ in parts[i + 1:]:
-            if atom == ";":
+        i += 1
+        while i < len(parts) and parts[i][0] not in (";", "{", "}"):
+            args.append(parts[i][0].strip("\"'"))
+            i += 1
+        require(i < len(parts) and parts[i][0] != "}", "NGINX_PARSE_REVIEW")
+        if parts[i][0] == ";":
+            if keyword == name and (at_depth is None or depth == at_depth):
                 values.append(args)
-                break
-            require(atom not in "{}", "NGINX_PARSE_REVIEW")
-            args.append(atom.strip("\"'"))
+        else:
+            depth += 1
+        i += 1
+    require(depth == 0, "NGINX_PARSE_REVIEW")
     return values
 
 
-def site_blocks(text):
+def normalize_name(name):
+    return name.lower().rstrip(".")
+
+
+def name_role(name):
+    normalized = normalize_name(name)
+    if normalized in DOMAINS:
+        return "OWNED_DOMAIN"
+    # These are not foreign hostnames. Accept ONLY alongside an owned domain.
+    if name in ("_", ""):
+        return "NEUTRAL_NAME_MARKER"
+    try:
+        address = ipaddress.ip_address(name)
+    except ValueError:
+        address = None
+    if address is not None and TARGET_IP is not None and address == TARGET_IP:
+        return "OWNED_SSH_TARGET_IP"
+    return "UNPROVEN_NAME"
+
+
+def server_records(text):
     parts = tokens(text)
-    selected = []
+    records = []
     for i in range(len(parts) - 1):
         if parts[i][0] != "server" or parts[i + 1][0] != "{":
             continue
@@ -192,11 +230,69 @@ def site_blocks(text):
                 break
         require(end is not None, "NGINX_PARSE_REVIEW")
         block = text[parts[i][1]:end]
-        names = {name.lower() for group in directives(block, "server_name") for name in group}
-        if names & DOMAINS:
-            require(names <= DOMAINS, "NGINX_MIXED_SERVER_NAMES_REVIEW")
-            selected.append(block)
+        # Only server-level declarations determine ownership; not nested location args.
+        names = [name for group in directives(block, "server_name", at_depth=1) for name in group]
+        roles = [name_role(name) for name in names]
+        relevant = "OWNED_DOMAIN" in roles
+        records.append({"text": block, "line": text.count("\n", 0, parts[i][1]) + 1,
+                        "names": names, "roles": roles, "relevant": relevant,
+                        "eligible": relevant and "UNPROVEN_NAME" not in roles})
+    return records
+
+
+def site_blocks(text):
+    selected = []
+    for record in server_records(text):
+        if record["relevant"]:
+            require(record["eligible"], "NGINX_MIXED_SERVER_NAMES_REVIEW")
+            selected.append(record["text"])
     return selected
+
+
+def nginx_candidates(nginx):
+    # A vhost may be symlinked twice; inspect each underlying file once.
+    seen = set()
+    result = []
+    for path in sorted(set(list((nginx / "sites-enabled").glob("*")) + list((nginx / "conf.d").glob("*.conf")))):
+        if path.is_file() and path.resolve() not in seen:
+            seen.add(path.resolve())
+            result.append(path)
+    return result
+
+
+def safe_name(name):
+    if name in ("_", ""):
+        return name
+    try:
+        ipaddress.ip_address(name)
+        return name
+    except ValueError:
+        pass
+    if re.fullmatch(r"(?=.{1,253}\.?$)(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}\.?", name):
+        return name
+    # Do not print arbitrary directives, regex strings or variable contents.
+    return "<unsupported-or-dynamic-name>"
+
+
+def diagnose_nginx(nginx=None):
+    nginx = nginx or NGINX
+    found = 0
+    blocked = False
+    for file_index, path in enumerate(nginx_candidates(nginx), 1):
+        data, _ = read_stable(path.resolve())
+        for block_index, record in enumerate(server_records(data.decode()), 1):
+            if not record["relevant"]:
+                continue
+            found += 1
+            blocked |= not record["eligible"]
+            print("NGINX_SITE_BLOCK " + json.dumps({"file_index": file_index,
+                "block_index": block_index, "line": record["line"],
+                "server_names": [{"name": safe_name(n), "role": role}
+                    for n, role in zip(record["names"], record["roles"])],
+                "selection": "ELIGIBLE" if record["eligible"] else "REVIEW_REQUIRED"}, ensure_ascii=True))
+    require(found > 0, "NGINX_SITE_NOT_FOUND_REQUIRES_REVIEW")
+    print("NGINX_DIAGNOSTIC_READ_ONLY_NO_ENV_PM2_OR_SECRET_VALUES")
+    return not blocked
 
 
 def collect(app=None, nginx=None, pm2_home=None, runner=run, proc_root=Path("/proc")):
@@ -271,7 +367,7 @@ def collect(app=None, nginx=None, pm2_home=None, runner=run, proc_root=Path("/pr
 
     # Capture diagnostics without printing nginx -T (which could disclose other vhosts).
     runner(["nginx", "-t"])
-    candidates = sorted(set(list((nginx / "sites-enabled").glob("*")) + list((nginx / "conf.d").glob("*.conf"))))
+    candidates = nginx_candidates(nginx)
     dependency_paths = set()
     requirements = []
     def dependencies(text, depth=0):
@@ -440,7 +536,7 @@ def write_new(path, data):
 
 
 def configure(settings):
-    global SHA, APP, DEST, DOMAINS, APP_NAME, NGINX, PM2_HOME, RUN_DIRECTORY, EXTRA_INCLUDES
+    global SHA, APP, DEST, DOMAINS, APP_NAME, NGINX, PM2_HOME, RUN_DIRECTORY, EXTRA_INCLUDES, TARGET_IP
     SHA = settings["ExpectedCommit"]
     require(isinstance(SHA, str) and re.fullmatch(r"[a-f0-9]{40}", SHA), "INVALID_EXPECTED_COMMIT")
     APP_NAME = settings["AppName"]
@@ -454,8 +550,12 @@ def configure(settings):
         ("AppDirectory", "RemoteBackupDirectory", "NginxDirectory", "Pm2Home", "RemoteWorkDirectory"))
     require(isinstance(settings["Domains"], list), "DOMAINS_MUST_BE_A_LIST")
     require(not DEST.resolve().is_relative_to(APP.resolve()) and not RUN_DIRECTORY.resolve().is_relative_to(APP.resolve()), "BACKUP_AND_WORK_DIRECTORY_MUST_BE_OUTSIDE_APP")
-    DOMAINS = set(settings["Domains"])
+    DOMAINS = {normalize_name(d) for d in settings["Domains"]}
     require(DOMAINS and all(isinstance(d, str) and re.fullmatch(r"[a-z0-9.-]+", d) for d in DOMAINS), "INVALID_DOMAINS")
+    try:
+        TARGET_IP = ipaddress.ip_address(settings.get("ServerHost", ""))
+    except ValueError:
+        TARGET_IP = None
     EXTRA_INCLUDES = {Path(p).resolve() for p in settings.get("AdditionalNginxIncludes", [])}
 
 
@@ -463,10 +563,14 @@ def main():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     os.umask(0o077)
     require(os.geteuid() == 0, "ROOT_REQUIRED")
-    require(len(sys.argv) == 4 and sys.argv[1] in ("prepare", "create", "verify", "cleanup"), "INVALID_ARGUMENTS")
+    require(len(sys.argv) == 4 and sys.argv[1] in ("prepare", "create", "verify", "cleanup", "diagnose"), "INVALID_ARGUMENTS")
     action, name, config_path = sys.argv[1:]
     configure(json.loads(Path(config_path).read_text()))
     require(NAME.fullmatch(name), "INVALID_BACKUP_NAME")
+    if action == "diagnose":
+        if not diagnose_nginx():
+            raise BackupError("NGINX_MIXED_SERVER_NAMES_REVIEW")
+        return
     require(shutil.which("gpg"), "GPG_REQUIRED_NO_PACKAGES_INSTALLED")
     private_directory()
     if action == "prepare":

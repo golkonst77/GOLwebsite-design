@@ -1,8 +1,10 @@
 # Local mocks only: no ssh/scp executable is ever invoked.
 $ErrorActionPreference = 'Stop'
-$scriptUnderTest = Join-Path $PSScriptRoot 'SiteConfig-Backup.ps1'
+$scriptSource = Join-Path $PSScriptRoot 'SiteConfig-Backup.ps1'
 $fixture = Join-Path ([IO.Path]::GetTempPath()) ('gol-wrapper-' + [Guid]::NewGuid().ToString('N'))
 $null = New-Item -ItemType Directory -Path $fixture
+$scriptUnderTest = Join-Path $fixture 'SiteConfig-Backup.ps1'
+Copy-Item -LiteralPath $scriptSource -Destination $scriptUnderTest
 $directory = Join-Path $fixture 'owner folder with spaces'
 $key = Join-Path $fixture 'fake deploy key'
 [IO.File]::WriteAllText($key, 'TEST FIXTURE ONLY; NOT A KEY')
@@ -52,13 +54,23 @@ try {
     & $scriptUnderTest -Mode Check -ConfigPath $configPath -BackupDirectory $directory
     Assert (@($global:MockCalls | Where-Object { $_ -match ' verify ' }).Count -eq 1) 'Verify was not called'
     Assert (@($global:MockCalls | Where-Object { $_ -match ' cleanup ' }).Count -eq 1) 'Encrypted verification copy was not cleaned'
+    # Default config resolution must happen in the script body, beside the saved script.
+    & $scriptUnderTest -Mode Check -BackupDirectory $directory
+    Assert (@($global:MockCalls | Where-Object { $_ -match ' verify ' }).Count -eq 2) 'Default local config path failed'
+    $diagStart = $global:MockCalls.Count
+    $neverCreate = Join-Path $fixture 'diagnosis must not create this'
+    & $scriptUnderTest -Mode Diagnose -BackupDirectory $neverCreate
+    $diagCalls = @($global:MockCalls | Select-Object -Skip $diagStart)
+    Assert (-not (Test-Path -LiteralPath $neverCreate)) 'Diagnose created an archive directory'
+    Assert (@($diagCalls | Where-Object { $_ -match ' diagnose ' }).Count -eq 1) 'Diagnostic command missing'
+    Assert (@($diagCalls | Where-Object { $_ -match ' prepare | create | verify | cleanup ' }).Count -eq 0) 'Diagnose invoked a backup operation'
 
     $global:FailVerify = $true
     $failed = $false
     try { & $scriptUnderTest -Mode Check -Archive $archive -ConfigPath $configPath -BackupDirectory $directory }
     catch { $failed = $true }
     Assert $failed 'Remote decryption error was not surfaced'
-    Assert (@($global:MockCalls | Where-Object { $_ -match ' cleanup ' }).Count -eq 2) 'Cleanup missing after failed decryption'
+    Assert (@($global:MockCalls | Where-Object { $_ -match ' cleanup ' }).Count -eq 3) 'Cleanup missing after failed decryption'
 
     $count = $global:MockCalls.Count
     [IO.File]::AppendAllText($archive, 'CORRUPTED')

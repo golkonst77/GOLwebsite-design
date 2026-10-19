@@ -1,13 +1,27 @@
 # Standalone script: the embedded helper contains code only, never production secrets.
 [CmdletBinding()]
 param(
-    [ValidateSet('Create','Check')][string]$Mode = 'Create',
+    [ValidateSet('Create','Check','Diagnose')][string]$Mode = 'Create',
     [string]$Archive = '',
-    [string]$ConfigPath = (Join-Path $PSScriptRoot 'backup.local.json'),
+    [string]$ConfigPath = '',
     [string]$KeyPath = '',
     [string]$BackupDirectory = ''
 )
 $ErrorActionPreference = 'Stop'
+# Resolve automatic script variables AFTER parameter binding (Windows PowerShell 5.1).
+if (-not $ConfigPath) {
+    $scriptDirectory = $PSScriptRoot
+    if ([string]::IsNullOrWhiteSpace($scriptDirectory) -and $PSCommandPath) {
+        $scriptDirectory = Split-Path -Parent $PSCommandPath
+    }
+    if ([string]::IsNullOrWhiteSpace($scriptDirectory) -and $MyInvocation.MyCommand.Path) {
+        $scriptDirectory = Split-Path -Parent $MyInvocation.MyCommand.Path
+    }
+    if ([string]::IsNullOrWhiteSpace($scriptDirectory)) {
+        throw 'Script location unavailable. Run the saved .ps1 with -File or supply -ConfigPath.'
+    }
+    $ConfigPath = Join-Path $scriptDirectory 'backup.local.json'
+}
 if ($env:OS -ne 'Windows_NT') { throw 'Run this script in Windows PowerShell or PowerShell 7 on Windows.' }
 foreach ($tool in @('ssh','scp')) {
     if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) { throw "Windows OpenSSH is required: $tool was not found." }
@@ -33,6 +47,7 @@ if (-not $BackupDirectory) {
 $remoteDirectory = ([string]$config.RemoteBackupDirectory).TrimEnd('/')
 $remoteSettings = @{}
 foreach ($name in @('AppDirectory','AppName','Domains','ExpectedCommit','RemoteBackupDirectory','RemoteWorkDirectory','Pm2Home','NginxDirectory')) { $remoteSettings[$name] = $config.$name }
+$remoteSettings['ServerHost'] = $serverAddress.Split('@')[1]
 $remoteSettings['AdditionalNginxIncludes'] = @($config.AdditionalNginxIncludes | Where-Object { $_ })
 $id = [Guid]::NewGuid().ToString('N')
 $remoteName = 'site-config-' + [DateTime]::UtcNow.ToString('yyyy-MM-ddTHHmmssZ') + '-' + $id.Substring(0,12) + '.tar.gz.gpg'
@@ -71,7 +86,7 @@ try {
         }
         $Archive = (Resolve-Path -LiteralPath $Archive).Path
         Check-LocalHash $Archive
-    } else {
+    } elseif ($Mode -eq 'Create') {
         if (-not (Test-Path -LiteralPath $BackupDirectory)) {
             $null = New-Item -ItemType Directory -Path $BackupDirectory
         }
@@ -91,9 +106,14 @@ try {
     & scp @sshOptions -q $localConfig ($serverAddress + ':' + $remoteConfig)
     Native-Check 'Private settings upload'
     $prefix = 'PATH=' + $config.NodeBinDirectory + ':$PATH PM2_HOME=' + $config.Pm2Home + ' python3 ' + $remoteHelper
+    if ($Mode -ne 'Diagnose') {
     & ssh @sshOptions $serverAddress ($prefix + ' prepare ' + $remoteName + ' ' + $remoteConfig)
     Native-Check 'Read-only preflight and private backup directory'
-    if ($Mode -eq 'Create') {
+    }
+    if ($Mode -eq 'Diagnose') {
+        & ssh @sshOptions $serverAddress ($prefix + ' diagnose ' + $remoteName + ' ' + $remoteConfig)
+        Native-Check 'Read-only Nginx ownership diagnosis'
+    } elseif ($Mode -eq 'Create') {
         Write-Host 'Enter a NEW backup password of at least 20 characters, then repeat it. Input is hidden.'
         & ssh @sshOptions -t $serverAddress ($prefix + ' create ' + $remoteName + ' ' + $remoteConfig)
         Native-Check 'Encrypted backup and server-side decryption test'
@@ -112,7 +132,7 @@ try {
         Native-Check 'GPG authentication, decryption and manifest verification'
         Write-Host 'BACKUP_CHECK_PASSED'
     }
-    Write-Host ('Windows archive: ' + $Archive)
+    if ($Mode -ne 'Diagnose') { Write-Host ('Windows archive: ' + $Archive) }
 }
 finally {
     if ($helperUploaded) {

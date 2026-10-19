@@ -224,6 +224,63 @@ server {
             self.assertIsNone(getattr(module, key))
         self.assertEqual(module.DOMAINS, set())
 
+    def test_owned_domain_with_exact_ssh_ip_and_neutral_markers_is_selected(self):
+        backup.TARGET_IP = backup.ipaddress.ip_address("192.0.2.10")
+        text = '''server { server_name site.example.invalid www.site.example.invalid 192.0.2.10 _ ""; }
+server { server_name _; root /fixture/EXCLUDED_DEFAULT; }
+server { server_name unrelated.invalid; root /fixture/EXCLUDED_OTHER; }
+server { server_name 192.0.2.10; root /fixture/EXCLUDED_IP_ONLY; }
+'''
+        blocks = backup.site_blocks(text)
+        self.assertEqual(len(blocks), 1)
+        self.assertNotIn("EXCLUDED_", blocks[0])
+        self.assertEqual(backup.server_records(text)[0]["roles"],
+            ["OWNED_DOMAIN", "OWNED_DOMAIN", "OWNED_SSH_TARGET_IP", "NEUTRAL_NAME_MARKER", "NEUTRAL_NAME_MARKER"])
+
+    def test_unproven_ip_domain_regex_and_wildcard_still_stop_selection(self):
+        backup.TARGET_IP = backup.ipaddress.ip_address("192.0.2.10")
+        for foreign in ["192.0.2.11", "other.example.invalid", "*.site.example.invalid", "$hostname", "~^.*$"]:
+            with self.assertRaisesRegex(backup.BackupError, "MIXED_SERVER_NAMES"):
+                backup.site_blocks("server { server_name site.example.invalid " + foreign + "; }")
+
+    def test_only_real_server_context_directives_define_ownership(self):
+        # Old parser incorrectly treated the header argument server_name as a directive.
+        text = '''server {
+ server_name SITE.EXAMPLE.INVALID. www.site.example.invalid.;
+ proxy_set_header server_name $host;
+ add_header X-Note "server_name foreign.invalid;";
+ location / { proxy_set_header server_name PRIVATE_HEADER_VALUE; }
+}'''
+        self.assertEqual(len(backup.site_blocks(text)), 1)
+        self.assertEqual(backup.directives(text, "server_name", at_depth=1),
+            [["SITE.EXAMPLE.INVALID.", "www.site.example.invalid."]])
+        self.assertFalse(backup.site_blocks('server { server_name other.invalid; location / { add_header server_name site.example.invalid; } }'))
+
+    def test_diagnosis_is_read_only_filters_output_and_reports_mixed_block(self):
+        self.vhost.write_text('''# PRIVATE_COMMENT
+server { server_name site.example.invalid _; set $api_key "PRIVATE_TOKEN_VALUE"; }
+server { server_name other.example.invalid; set $secret "PRIVATE_OTHER_VALUE"; }
+server { server_name site.example.invalid other.example.invalid; }
+''')
+        before = self.snapshot()
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertFalse(backup.diagnose_nginx(self.nginx))
+        text = output.getvalue()
+        self.assertIn('"selection": "ELIGIBLE"', text)
+        self.assertIn('"selection": "REVIEW_REQUIRED"', text)
+        self.assertIn('"name": "other.example.invalid", "role": "UNPROVEN_NAME"', text)
+        self.assertNotIn("PRIVATE_", text)
+        self.assertNotIn(str(self.root), text)
+        self.assertEqual(text.count("NGINX_SITE_BLOCK "), 2)
+        self.assertEqual(before, self.snapshot())
+        self.assertEqual(self.calls, [])
+
+    def test_duplicate_vhost_symlink_is_not_backed_up_twice(self):
+        (self.nginx / "sites-enabled/alias").symlink_to(self.vhost)
+        files = unpack(self.collect())
+        self.assertEqual(len([name for name in files if name.startswith("nginx/sites/")]), 1)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
