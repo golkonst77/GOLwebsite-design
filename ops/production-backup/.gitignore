@@ -1,0 +1,4 @@
+backup.local.json
+*.gpg
+*.sha256
+__pycache__/
