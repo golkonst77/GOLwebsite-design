@@ -107,7 +107,7 @@ server {
 
     def test_actual_aes_encryption_decryption_wrong_password_and_tamper(self):
         archive = self.collect()
-        password = "synthetic fixture passphrase 12345"
+        password = "Fx7!q9@Lm2"
         encrypted = backup.crypt(archive, password, run_directory=self.root)
         self.assertNotIn(b"synthetic-mail-secret", encrypted)
         self.assertNotIn(b"synthetic-runtime-secret", encrypted)
@@ -223,6 +223,21 @@ server {
         for key in ("APP", "SHA", "DEST", "APP_NAME", "NGINX", "PM2_HOME", "RUN_DIRECTORY"):
             self.assertIsNone(getattr(module, key))
         self.assertEqual(module.DOMAINS, set())
+
+    def test_new_password_exactly_ten_and_old_passwords_still_decrypt(self):
+        with patch.object(backup.sys.stdin, "isatty", return_value=True), patch.object(backup.sys.stderr, "isatty", return_value=True):
+            with patch.object(backup.getpass, "getpass", side_effect=["Fx7!q9@Lm2", "Fx7!q9@Lm2"]):
+                self.assertEqual(backup.password(confirm=True), "Fx7!q9@Lm2")
+            for value in ["x" * 9, "x" * 11, "x" * 20, "x" * 9 + "\n"]:
+                with patch.object(backup.getpass, "getpass", return_value=value):
+                    with self.assertRaises(backup.BackupError):
+                        backup.password(confirm=True)
+            with patch.object(backup.getpass, "getpass", side_effect=["Fx7!q9@Lm2", "different!"]):
+                with self.assertRaisesRegex(backup.BackupError, "PASSWORDS_DIFFER"):
+                    backup.password(confirm=True)
+            with patch.object(backup.getpass, "getpass", return_value="older synthetic long password"):
+                self.assertEqual(backup.password(), "older synthetic long password")
+
 
     def test_owned_domain_with_exact_ssh_ip_and_neutral_markers_is_selected(self):
         backup.TARGET_IP = backup.ipaddress.ip_address("192.0.2.10")

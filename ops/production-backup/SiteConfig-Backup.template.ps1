@@ -114,7 +114,7 @@ try {
         & ssh @sshOptions $serverAddress ($prefix + ' diagnose ' + $remoteName + ' ' + $remoteConfig)
         Native-Check 'Read-only Nginx ownership diagnosis'
     } elseif ($Mode -eq 'Create') {
-        Write-Host 'Enter a NEW backup password of at least 20 characters, then repeat it. Input is hidden.'
+        Write-Host 'Enter a NEW backup password of exactly 10 characters, then repeat it. Input is hidden.'
         & ssh @sshOptions -t $serverAddress ($prefix + ' create ' + $remoteName + ' ' + $remoteConfig)
         Native-Check 'Encrypted backup and server-side decryption test'
         & scp @sshOptions -q ($serverAddress + ':' + $remoteDirectory + '/' + $remoteName) $Archive

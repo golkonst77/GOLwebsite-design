@@ -507,8 +507,10 @@ def password(confirm=False):
     with warnings.catch_warnings():
         warnings.simplefilter("error", getpass.GetPassWarning)
         value = getpass.getpass("Backup password (hidden): ")
-        require(20 <= len(value) <= 256 and not any(c in value for c in "\r\n\0"),
-                "PASSWORD_REQUIRE_20_TO_256_CHARACTERS")
+        require(1 <= len(value) <= 256 and not any(c in value for c in "\r\n\0"),
+                "PASSWORD_INVALID")
+        if confirm:
+            require(len(value) == 10, "NEW_PASSWORD_REQUIRE_EXACTLY_10_CHARACTERS")
         if confirm:
             require(value == getpass.getpass("Repeat password (hidden): "), "PASSWORDS_DIFFER")
     return value
